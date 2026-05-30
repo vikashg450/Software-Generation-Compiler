@@ -69,6 +69,7 @@ class LLMClient:
         self.mock = mock
         self.model = model
         self.client = None
+        self.client_type = None
         self.mock_engine = None
 
         # Load environment variables from .env
@@ -87,20 +88,30 @@ class LLMClient:
 
         if self.api_key and not self.mock:
             try:
-                import anthropic
-                self.client = anthropic.Anthropic(api_key=self.api_key)
-                self.context.log("setup", "Successfully initialized Anthropic Claude Client with API key.")
-            except ImportError:
+                if self.api_key.startswith("sk-or-"):
+                    from openai import OpenAI
+                    self.client = OpenAI(
+                        base_url="https://openrouter.ai/api/v1",
+                        api_key=self.api_key,
+                    )
+                    self.client_type = "openrouter"
+                    self.context.log("setup", "Successfully initialized OpenRouter Client with sk-or key.")
+                else:
+                    import anthropic
+                    self.client = anthropic.Anthropic(api_key=self.api_key)
+                    self.client_type = "anthropic"
+                    self.context.log("setup", "Successfully initialized Anthropic Claude Client.")
+            except ImportError as imp_err:
                 self.context.log(
                     "setup",
-                    "anthropic package is not installed. Falling back to High-Fidelity Mock.",
+                    f"Required SDK package for client missing: {imp_err}. Falling back to High-Fidelity Mock.",
                     "WARNING",
                 )
                 self.mock = True
             except Exception as e:
                 self.context.log(
                     "setup",
-                    f"Failed to initialize Anthropic client: {e}. Falling back to Mock.",
+                    f"Failed to initialize LLM client: {e}. Falling back to Mock.",
                     "WARNING",
                 )
                 self.mock = True
@@ -162,25 +173,46 @@ class LLMClient:
                 raise RuntimeError(err_msg) from e
         else:
             try:
-                message = self.client.messages.create(
-                    model=target_model,
-                    max_tokens=8192,
-                    temperature=0.0,  # Ensure highly deterministic compiler responses
-                    system=system_instruction or "",
-                    messages=[
-                        {"role": "user", "content": prompt}
-                    ]
-                )
-                response_text = message.content[0].text
-                input_tokens = message.usage.input_tokens
-                output_tokens = message.usage.output_tokens
+                if self.client_type == "openrouter":
+                    # OpenRouter OpenAI compatible call
+                    if "sonnet" in target_model.lower() or "pro" in target_model.lower():
+                        or_model = "anthropic/claude-3.5-sonnet"
+                    else:
+                        or_model = "anthropic/claude-3.5-haiku"
+
+                    completion = self.client.chat.completions.create(
+                        model=or_model,
+                        messages=[
+                            {"role": "system", "content": system_instruction or ""},
+                            {"role": "user", "content": prompt}
+                        ],
+                        temperature=0.0,
+                    )
+                    response_text = completion.choices[0].message.content or ""
+                    input_tokens = completion.usage.prompt_tokens
+                    output_tokens = completion.usage.completion_tokens
+                else:
+                    # Anthropic SDK call
+                    message = self.client.messages.create(
+                        model=target_model,
+                        max_tokens=8192,
+                        temperature=0.0,  # Ensure highly deterministic compiler responses
+                        system=system_instruction or "",
+                        messages=[
+                            {"role": "user", "content": prompt}
+                        ]
+                    )
+                    response_text = message.content[0].text
+                    input_tokens = message.usage.input_tokens
+                    output_tokens = message.usage.output_tokens
             except Exception as e:
-                err_msg = f"Anthropic Claude API call failure: {e}"
+                err_msg = f"Claude API call failure: {e}"
                 self.context.log(stage, err_msg, "ERROR")
                 raise RuntimeError(err_msg) from e
 
         latency = time.time() - start_time
         return response_text, input_tokens, output_tokens, latency
+
 
     def call_llm(
         self,
