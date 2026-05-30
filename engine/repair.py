@@ -40,6 +40,9 @@ class RepairAgent(BaseAgent):
         """
         Executes a repair iteration by feeding the errors and config back to the LLM.
         """
+        # DESIGN DECISION: This repair agent targets ONLY the broken fields/sections reported 
+        # by the Validator/Simulator. It provides surgical feedback loop repair rather than 
+        # a full retry from scratch, preserving all valid portions of the config.
         self.client.context.log(self.stage_name, f"Starting repair process for {len(errors)} error(s)...")
 
         # Format the prompt to include the error messages and current config

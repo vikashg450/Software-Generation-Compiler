@@ -51,7 +51,9 @@ def validate_config(config: UnifiedAppConfigSchema) -> List[str]:
                 if ref_table not in config.database_schema.tables:
                     errors.append(f"Validation failed: Foreign key in table '{table_name}' references non-existent table '{ref_table}'")
 
-    # 3. API Validation vs DB
+    # 3. API Validation vs DB (Cross-Layer API-DB Links)
+    # Verifies that every database operation in the API schema references a valid table,
+    # and all column mapping/payload variables link to existing DB columns with consistent types.
     for ep_name, ep in config.api_schema.endpoints.items():
         # DB operations check
         if ep.db_operations:
@@ -151,7 +153,9 @@ def validate_config(config: UnifiedAppConfigSchema) -> List[str]:
         if errors:
             break  # Stop at first cycle
 
-    # 5. UI Page & Component Authentication / Role Access Validation
+    # 5. UI Page & Component Authentication / Role Access Validation (Cross-Layer UI-API Links)
+    # Verifies that every UI component referencing an API data source or submit action points to
+    # a valid, existing API endpoint, and checks that roles allowed on the UI page match API allowed roles.
     for page_route, page in config.ui_schema.pages.items():
         # Undefined role check on page
         for role in page.allowed_roles:

@@ -6,6 +6,7 @@ Defines ExecutionContext, LLMClient, and BaseAgent.
 import os
 import time
 import logging
+import json
 from typing import Dict, Any, List, Optional
 
 from utils.cost_analyzer import CostAnalyzer
@@ -54,7 +55,7 @@ class ExecutionContext:
 
 class LLMClient:
     """
-    Client wrapper that routes prompt calls to either Google GenAI SDK or the local High-Fidelity Mock.
+    Client wrapper that routes prompt calls to either Anthropic Claude API or the local High-Fidelity Mock.
     Tracks token usage, costs, and latency inside the shared ExecutionContext.
     """
 
@@ -62,7 +63,7 @@ class LLMClient:
         self,
         context: Optional[ExecutionContext] = None,
         mock: bool = False,
-        model: str = "gemini-2.5-flash",
+        model: str = "claude-3-5-sonnet-20241022",
     ) -> None:
         self.context = context or ExecutionContext()
         self.mock = mock
@@ -75,58 +76,66 @@ class LLMClient:
             from dotenv import load_dotenv
             load_dotenv()
         except ImportError:
-            logger.warning("dotenv not installed, skipping load_dotenv.")
+            pass
 
-        # Accept GEMINI_API_KEY or GOOGLE_API_KEY
-        self.api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+        # Check mock flag in environment
+        env_mock = os.environ.get("MOCK_LLM", "false").lower() == "true"
+        if env_mock:
+            self.mock = True
+
+        self.api_key = os.environ.get("ANTHROPIC_API_KEY")
 
         if self.api_key and not self.mock:
             try:
-                from google import genai
-                self.client = genai.Client(api_key=self.api_key)
-                self.context.log("setup", "Successfully initialized Google GenAI Client with API key.")
+                import anthropic
+                self.client = anthropic.Anthropic(api_key=self.api_key)
+                self.context.log("setup", "Successfully initialized Anthropic Claude Client with API key.")
             except ImportError:
                 self.context.log(
                     "setup",
-                    "google-genai package is not installed. Falling back to High-Fidelity Mock.",
+                    "anthropic package is not installed. Falling back to High-Fidelity Mock.",
                     "WARNING",
                 )
                 self.mock = True
             except Exception as e:
                 self.context.log(
                     "setup",
-                    f"Failed to initialize Google GenAI SDK client: {e}. Falling back to Mock.",
+                    f"Failed to initialize Anthropic client: {e}. Falling back to Mock.",
                     "WARNING",
                 )
                 self.mock = True
         else:
-            if not self.api_key and not self.mock:
+            if not self.mock and not self.api_key:
                 self.context.log(
-                    "setup", "No GEMINI_API_KEY found. Falling back to High-Fidelity Mock.", "INFO"
+                    "setup", "No ANTHROPIC_API_KEY found. Falling back to High-Fidelity Mock.", "INFO"
                 )
-            self.mock = True
+                self.mock = True
 
         if self.mock:
             from utils.mock_llm import MockLLM
             self.mock_engine = MockLLM()
             self.context.log("setup", "Initialized High-Fidelity Mock LLM Engine.")
 
-    def call_llm(
+    def _clean_json(self, text: str) -> str:
+        text = text.strip()
+        if text.startswith("```"):
+            lines = text.splitlines()
+            if lines[0].startswith("```"):
+                lines = lines[1:]
+            if lines and lines[-1].strip() == "```":
+                lines = lines[:-1]
+            text = "\n".join(lines).strip()
+        return text
+
+    def _execute_call(
         self,
         prompt: str,
-        system_instruction: Optional[str] = None,
-        json_mode: bool = False,
-        stage: str = "general",
-        model: Optional[str] = None,
-    ) -> str:
-        """
-        Executes a call to the LLM (real or mock).
-        Tracks and records metrics (tokens, cost, latency) in the shared execution context.
-        """
-        target_model = model or self.model
+        system_instruction: Optional[str],
+        target_model: str,
+        stage: str,
+    ) -> tuple[str, int, int, float]:
+        """Runs the actual call and returns (response_text, input_tokens, output_tokens, latency)"""
         start_time = time.time()
-
-        # Calculate estimated input tokens
         input_tokens = self.context.cost_analyzer.estimate_tokens(prompt)
         if system_instruction:
             input_tokens += self.context.cost_analyzer.estimate_tokens(system_instruction)
@@ -138,9 +147,8 @@ class LLMClient:
 
         if self.mock:
             try:
-                # Simulating network latency based on model tier
                 import random
-                if "pro" in target_model.lower():
+                if "sonnet" in target_model.lower() or "pro" in target_model.lower():
                     sleep_time = random.uniform(0.8, 1.4)
                 else:
                     sleep_time = random.uniform(0.2, 0.5)
@@ -154,32 +162,89 @@ class LLMClient:
                 raise RuntimeError(err_msg) from e
         else:
             try:
-                from google.genai import types
-
-                config = types.GenerateContentConfig(
-                    system_instruction=system_instruction,
-                    response_mime_type="application/json" if json_mode else "text/plain",
-                    temperature=0.0,  # Ensure highly deterministic compiler responses
-                )
-
-                response = self.client.models.generate_content(
+                message = self.client.messages.create(
                     model=target_model,
-                    contents=prompt,
-                    config=config,
+                    max_tokens=8192,
+                    temperature=0.0,  # Ensure highly deterministic compiler responses
+                    system=system_instruction or "",
+                    messages=[
+                        {"role": "user", "content": prompt}
+                    ]
                 )
-                response_text = response.text or ""
-
-                if response.usage_metadata:
-                    input_tokens = response.usage_metadata.prompt_token_count
-                    output_tokens = response.usage_metadata.candidates_token_count
-                else:
-                    output_tokens = self.context.cost_analyzer.estimate_tokens(response_text)
+                response_text = message.content[0].text
+                input_tokens = message.usage.input_tokens
+                output_tokens = message.usage.output_tokens
             except Exception as e:
-                err_msg = f"Google GenAI SDK call failure: {e}"
+                err_msg = f"Anthropic Claude API call failure: {e}"
                 self.context.log(stage, err_msg, "ERROR")
                 raise RuntimeError(err_msg) from e
 
         latency = time.time() - start_time
+        return response_text, input_tokens, output_tokens, latency
+
+    def call_llm(
+        self,
+        prompt: str,
+        system_instruction: Optional[str] = None,
+        json_mode: bool = False,
+        stage: str = "general",
+        model: Optional[str] = None,
+    ) -> str:
+        """
+        Executes a call to the LLM (real or mock).
+        Tracks and records metrics (tokens, cost, latency) in the shared execution context.
+        Contains JSON parse failure retry logic with markdown code block stripping.
+        """
+        # Map model names to Claude equivalents
+        raw_model = model or self.model
+        if "pro" in raw_model.lower() or "sonnet" in raw_model.lower():
+            target_model = "claude-3-5-sonnet-20241022"
+        elif "flash" in raw_model.lower() or "haiku" in raw_model.lower():
+            target_model = "claude-3-5-haiku-20241022"
+        else:
+            target_model = "claude-3-5-sonnet-20241022"
+
+        response_text, input_tokens, output_tokens, latency = self._execute_call(
+            prompt, system_instruction, target_model, stage
+        )
+
+        if json_mode:
+            cleaned = self._clean_json(response_text)
+            try:
+                # Validate parseability
+                json.loads(cleaned)
+                response_text = cleaned
+            except Exception as parse_err:
+                self.context.log(
+                    stage,
+                    f"JSON parsing failed initially: {parse_err}. Retrying once with explicit syntax warning...",
+                    "WARNING",
+                )
+                # Build retry prompt
+                retry_prompt = (
+                    f"Your previous response was:\n{response_text}\n\n"
+                    f"This response failed to parse as valid JSON. Please correct it and output ONLY the valid raw JSON object. "
+                    f"Do not include any explanations, introductory text, or markdown code block fences."
+                )
+                # Retry once
+                retry_response, r_in, r_out, r_lat = self._execute_call(
+                    retry_prompt, system_instruction, target_model, stage
+                )
+                response_text = self._clean_json(retry_response)
+                input_tokens += r_in
+                output_tokens += r_out
+                latency += r_lat
+
+                try:
+                    json.loads(response_text)
+                    self.context.log(stage, "JSON successfully parsed on retry.")
+                except Exception as retry_err:
+                    self.context.log(
+                        stage,
+                        f"JSON parsing failed on retry attempt: {retry_err}. Proceeding with raw string.",
+                        "ERROR",
+                    )
+
         cost = self.context.cost_analyzer.track_call(
             model=target_model,
             input_tokens=input_tokens,

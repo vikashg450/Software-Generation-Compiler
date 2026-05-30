@@ -47,14 +47,38 @@ Simulates the execution of the final configuration by setting up an in-memory da
 ---
 
 ## 📊 Benchmark Suite & Results (`/evaluation`)
-
 The codebase includes an automated benchmarker evaluating **20 scenarios** (10 real products and 10 edge cases):
 *   **10 Core Products**: CRM, E-commerce, Inventory, Blog, LMS, Task Manager, Event Planner, Fitness Tracker, Expense Manager, Booking System.
 *   **10 Edge Cases**: Vague inputs, conflicting role permissions, negative pricing rates, circular page redirects, incorrect data types, and missing database tables.
 
-### Execution Results:
-*   **Success Rate**: **100%** (all 20 scenarios compile successfully and pass execution simulations).
-*   **Automatic Self-Repair**: Successfully tested and verified on complex scenarios (e.g. automatically detecting and correcting negative pricing and role mismatches in API-DB mappings).
+### Summary Metrics:
+- **Overall Success Rate**: **100.0%** (20/20 scenarios)
+- **Average Compilation Latency**: **5.493 seconds**
+- **Total System Repairs Needed**: **18 iterations**
+- **Total Estimated Token Cost**: **$0.628242 USD**
+
+| Scenario ID | Name | Category | Compiled Success? | Simulator Success? | Repairs | Latency (s) | Estimated Cost ($) |
+| :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| `crm` | Customer Relationship Manager | Product Template | ✅ Yes | ✅ Passed | 1 | 5.872s | $0.054369 |
+| `ecommerce` | E-Commerce System | Product Template | ✅ Yes | ✅ Passed | 1 | 4.359s | $0.038310 |
+| `inventory` | Inventory Stock Manager | Product Template | ✅ Yes | ✅ Passed | 1 | 5.660s | $0.033927 |
+| `blog` | Blogging Platform | Product Template | ✅ Yes | ✅ Passed | 1 | 5.898s | $0.033984 |
+| `lms` | Learning Management System | Product Template | ✅ Yes | ✅ Passed | 1 | 5.714s | $0.030369 |
+| `taskmanager` | Task Manager Platform | Product Template | ✅ Yes | ✅ Passed | 1 | 5.244s | $0.033456 |
+| `eventplanner` | Event Planner Hub | Product Template | ✅ Yes | ✅ Passed | 1 | 6.710s | $0.030225 |
+| `fitnesstracker` | Fitness Tracker App | Product Template | ✅ Yes | ✅ Passed | 1 | 6.171s | $0.028962 |
+| `expensemanager` | Corporate Expense Manager | Product Template | ✅ Yes | ✅ Passed | 1 | 6.244s | $0.028929 |
+| `bookingsystem` | Room Booking System | Product Template | ✅ Yes | ✅ Passed | 1 | 5.565s | $0.031035 |
+| `admin_forbidden_login` | Admin Forbidden Login | Edge Case | ✅ Yes | ✅ Passed | 0 | 4.132s | $0.022389 |
+| `conflicting_roles` | Conflicting Roles | Edge Case | ✅ Yes | ✅ Passed | 1 | 6.232s | $0.029223 |
+| `negative_pricing` | Negative Pricing | Edge Case | ✅ Yes | ✅ Passed | 1 | 5.774s | $0.025029 |
+| `no_database` | No Database | Edge Case | ✅ Yes | ✅ Passed | 1 | 6.066s | $0.026157 |
+| `api_referencing_missing_db` | API Referencing Missing DB Table | Edge Case | ✅ Yes | ✅ Passed | 1 | 4.826s | $0.028776 |
+| `incorrect_data_type` | Incorrect Data Type Mismatch | Edge Case | ✅ Yes | ✅ Passed | 0 | 4.157s | $0.021273 |
+| `empty_intent` | Empty Intent / No-Op Daemon | Edge Case | ✅ Yes | ✅ Passed | 1 | 4.879s | $0.020121 |
+| `massive_scale` | Massive Scale Pages | Edge Case | ✅ Yes | ✅ Passed | 1 | 5.715s | $0.048147 |
+| `ambiguous_flow` | Ambiguous Flow / Circular Routing | Edge Case | ✅ Yes | ✅ Passed | 1 | 5.723s | $0.033423 |
+| `gated_read` | Gated Read / Free Users Access Premium | Edge Case | ✅ Yes | ✅ Passed | 1 | 4.912s | $0.030138 |
 
 ---
 

@@ -54,6 +54,16 @@ class CostAnalyzer:
             "output": 5.00 / 1_000_000,
             "quality": 0.95,  # Quality score rating (relative)
         },
+        "claude-3-5-haiku-20241022": {
+            "input": 0.80 / 1_000_000,
+            "output": 4.00 / 1_000_000,
+            "quality": 0.85,  # Quality score rating (relative)
+        },
+        "claude-3-5-sonnet-20241022": {
+            "input": 3.00 / 1_000_000,
+            "output": 15.00 / 1_000_000,
+            "quality": 0.98,  # Quality score rating (relative)
+        },
     }
 
     def __init__(self) -> None:
@@ -71,6 +81,8 @@ class CostAnalyzer:
         self.model_metrics = {
             "gemini-2.5-flash": ModelBreakdownMetrics(),
             "gemini-2.5-pro": ModelBreakdownMetrics(),
+            "claude-3-5-haiku-20241022": ModelBreakdownMetrics(),
+            "claude-3-5-sonnet-20241022": ModelBreakdownMetrics(),
         }
 
     @staticmethod
@@ -86,7 +98,11 @@ class CostAnalyzer:
     def _resolve_model(self, model: str) -> str:
         """Resolves the model name to a canonical supported model name."""
         m_lower = model.lower()
-        if "pro" in m_lower:
+        if "sonnet" in m_lower or "claude-3-5-sonnet" in m_lower:
+            return "claude-3-5-sonnet-20241022"
+        elif "haiku" in m_lower or "claude-3-5-haiku" in m_lower:
+            return "claude-3-5-haiku-20241022"
+        elif "pro" in m_lower:
             return "gemini-2.5-pro"
         elif "flash" in m_lower:
             return "gemini-2.5-flash"

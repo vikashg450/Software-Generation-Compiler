@@ -4,3 +4,4 @@ google-genai
 python-dotenv
 pandas
 plotly
+anthropic
