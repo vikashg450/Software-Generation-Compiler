@@ -56,6 +56,26 @@ class EvaluationRunner:
             if context.errors:
                 raise RuntimeError(f"Intent extraction failed: {context.errors[-1]}")
 
+            if intent.status == "needs_clarification":
+                total_latency = time.time() - start_time
+                metrics = context.cost_analyzer.get_metrics()
+                return {
+                    "status": "needs_clarification",
+                    "questions": intent.questions,
+                    "success": False,
+                    "retries": 0,
+                    "latency": round(total_latency, 3),
+                    "cost": metrics.total_cost_usd,
+                    "input_tokens": metrics.total_input_tokens,
+                    "output_tokens": metrics.total_output_tokens,
+                    "total_tokens": metrics.total_tokens,
+                    "calls": metrics.total_calls,
+                    "errors": ["Prompt requires clarification."],
+                    "logs": [f"[{log['stage'].upper()}] {log['message']}" for log in context.logs],
+                    "sim_logs": [],
+                    "config": None,
+                }
+
             # Stage 2: System Architect Blueprint
             architect = SystemArchitectAgent(client)
             blueprint = architect.generate_blueprint(intent)

@@ -55,12 +55,22 @@ class MockLLM:
                 {"name": "Premium", "price": 19.99, "features": ["All features"]},
             ]
 
+            ent_list = list(tables.keys())
+            if len(ent_list) < 2:
+                if "users" not in ent_list:
+                    ent_list.append("users")
+                else:
+                    ent_list.append("items")
+
             intent = {
                 "product_name": name,
                 "features": [f"Manage {k}" for k in tables.keys()] + ["User Auth", "Dashboard"],
                 "user_roles": roles,
                 "pricing_plans": pricing_data,
                 "core_operations": [f"CRUD {k}" for k in tables.keys()],
+                "entities": ent_list,
+                "status": "success",
+                "questions": [],
             }
 
             architecture = {

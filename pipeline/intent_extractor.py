@@ -24,21 +24,43 @@ class Intent(BaseModel):
     user_roles: List[str] = Field(default_factory=list)
     pricing_plans: List[PricingPlan] = Field(default_factory=list)
     core_operations: List[str] = Field(default_factory=list)
+    entities: List[str] = Field(default_factory=list)
+    status: str = Field(default="success")
+    questions: List[str] = Field(default_factory=list)
 
 
 SYSTEM_INSTRUCTION = """
 You are the Intent Extractor Agent. Your job is to analyze a natural language software design prompt
 and extract a structured JSON representation of the application's intent.
 
-You must output a single JSON object matching the following structure:
+If the prompt is vague, conflicting, or lacks critical details (such as defining fewer than 2 entities or 1 role),
+you must return a clarification request JSON object matching this structure:
 {
+  "status": "needs_clarification",
+  "questions": [
+    "What user roles do you need?",
+    "Should payments be included?"
+  ],
+  "product_name": "Incomplete App",
+  "features": [],
+  "user_roles": [],
+  "pricing_plans": [],
+  "core_operations": [],
+  "entities": []
+}
+
+Otherwise, if the prompt is complete, return:
+{
+  "status": "success",
+  "questions": [],
   "product_name": "Name of the product",
   "features": ["feature 1", "feature 2"],
   "user_roles": ["role 1", "role 2"],
   "pricing_plans": [
     {"name": "Free", "price": 0.0, "features": ["Basic feature"]}
   ],
-  "core_operations": ["CRUD tables", "Operation 2"]
+  "core_operations": ["CRUD tables", "Operation 2"],
+  "entities": ["entity1", "entity2"]
 }
 
 Be precise. Do not include markdown wraps or any conversational text. Just output pure JSON.
@@ -58,12 +80,11 @@ class IntentExtractorAgent(BaseAgent):
     def extract_intent(self, prompt: str) -> Intent:
         """
         Parses the user prompt to produce a structured Intent model.
-        Logs progress and handles failures gracefully.
+        Enforces Step 6 clarification checks if input details are insufficient.
         """
         self.client.context.log(self.stage_name, "Starting intent extraction stage...")
 
         try:
-            # Check if running mock and retrieve the simulated intent
             raw_response = self.execute(prompt, json_mode=True)
             self.client.context.log(self.stage_name, "Received response from LLM Client.")
 
@@ -71,13 +92,32 @@ class IntentExtractorAgent(BaseAgent):
             parsed = json.loads(raw_response)
             intent = Intent(**parsed)
 
+            # Check if we need to force clarification based on entity/role count
+            if intent.status != "needs_clarification":
+                ent_count = len(intent.entities)
+                role_count = len(intent.user_roles)
+                if ent_count < 2 or role_count < 1:
+                    intent.status = "needs_clarification"
+                    if role_count < 1:
+                        intent.questions.append("What user roles do you need? (e.g. Admin, Member, Guest)")
+                    if ent_count < 2:
+                        intent.questions.append("What database entities should this app manage? (e.g. Contacts, Tasks, Projects)")
+
             # Save to stage outputs
             self.client.context.stage_outputs["intent"] = intent.model_dump()
-            self.client.context.log(
-                self.stage_name,
-                f"Successfully extracted intent for product '{intent.product_name}' "
-                f"with roles: {intent.user_roles}.",
-            )
+            
+            if intent.status == "needs_clarification":
+                self.client.context.log(
+                    self.stage_name,
+                    f"Prompt requires clarification. Generated {len(intent.questions)} question(s).",
+                    "WARNING"
+                )
+            else:
+                self.client.context.log(
+                    self.stage_name,
+                    f"Successfully extracted intent for product '{intent.product_name}' "
+                    f"with roles: {intent.user_roles}.",
+                )
             return intent
 
         except Exception as e:
@@ -92,6 +132,9 @@ class IntentExtractorAgent(BaseAgent):
                 user_roles=["guest"],
                 pricing_plans=[PricingPlan(name="Free", price=0.0, features=["Basic usage"])],
                 core_operations=["read status"],
+                entities=["Item"],
+                status="success"
             )
             self.client.context.stage_outputs["intent"] = fallback.model_dump()
             return fallback
+

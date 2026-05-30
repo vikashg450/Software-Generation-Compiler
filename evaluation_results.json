@@ -2,39 +2,39 @@
   {
     "success": true,
     "retries": 1,
-    "latency": 5.872,
-    "cost": 0.054369,
-    "input_tokens": 4443,
-    "output_tokens": 2736,
-    "total_tokens": 7179,
+    "latency": 6.063,
+    "cost": 0.060891,
+    "input_tokens": 6122,
+    "output_tokens": 2835,
+    "total_tokens": 8957,
     "calls": 5,
     "errors": [],
     "logs": [
       "[SETUP] Initialized High-Fidelity Mock LLM Engine.",
       "[INTENT_EXTRACTION] Starting intent extraction stage...",
       "[INTENT_EXTRACTION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'intent_extraction'...",
-      "[INTENT_EXTRACTION] Call finished in 1.24s. Tokens: 189 in / 131 out. Cost: $0.002532",
+      "[INTENT_EXTRACTION] Call finished in 1.08s. Tokens: 319 in / 154 out. Cost: $0.003267",
       "[INTENT_EXTRACTION] Received response from LLM Client.",
       "[INTENT_EXTRACTION] Successfully extracted intent for product 'Customer Relationship Manager' with roles: ['sales_rep', 'manager', 'admin'].",
       "[SYSTEM_ARCHITECT] Starting system architecture generation...",
       "[SYSTEM_ARCHITECT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'system_architect'...",
-      "[SYSTEM_ARCHITECT] Call finished in 0.88s. Tokens: 385 in / 533 out. Cost: $0.009150",
+      "[SYSTEM_ARCHITECT] Call finished in 1.18s. Tokens: 408 in / 533 out. Cost: $0.009219",
       "[SYSTEM_ARCHITECT] Received response from LLM Client.",
       "[SYSTEM_ARCHITECT] Successfully generated architecture blueprint with 2 DB tables, 2 API endpoints, and 1 UI pages.",
       "[SCHEMA_GENERATION] Starting schema generation...",
       "[SCHEMA_GENERATION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'schema_generation'...",
-      "[SCHEMA_GENERATION] Call finished in 1.31s. Tokens: 856 in / 694 out. Cost: $0.012978",
+      "[SCHEMA_GENERATION] Call finished in 1.07s. Tokens: 856 in / 719 out. Cost: $0.013353",
       "[SCHEMA_GENERATION] Received response from LLM Client.",
       "[SCHEMA_GENERATION] Successfully generated and validated UnifiedAppConfigSchema for 'Customer Relationship Manager'.",
       "[REFINEMENT] Starting refinement and alignment stage...",
       "[REFINEMENT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'refinement'...",
-      "[REFINEMENT] Call finished in 1.04s. Tokens: 1515 in / 694 out. Cost: $0.014955",
+      "[REFINEMENT] Call finished in 1.36s. Tokens: 2278 in / 719 out. Cost: $0.017619",
       "[REFINEMENT] Received response from LLM Client.",
       "[REFINEMENT] Successfully refined UnifiedAppConfigSchema for 'Customer Relationship Manager'.",
       "[COMPILER] Compilation check failed on iteration 0 with 1 errors. Triggering repair...",
       "[REPAIR] Starting repair process for 1 error(s)...",
       "[REPAIR] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'repair'...",
-      "[REPAIR] Call finished in 1.37s. Tokens: 1498 in / 684 out. Cost: $0.014754",
+      "[REPAIR] Call finished in 1.26s. Tokens: 2261 in / 710 out. Cost: $0.017433",
       "[REPAIR] Received repaired response from LLM Client.",
       "[REPAIR] Successfully repaired configuration for 'Customer Relationship Manager'.",
       "[COMPILER] Configuration compiled successfully on iteration 1!"
@@ -283,7 +283,125 @@
         "rules": [],
         "workflows": {}
       },
-      "pricing": null
+      "pricing": null,
+      "intent": {
+        "product_name": "Customer Relationship Manager",
+        "features": [
+          "Manage users",
+          "Manage contacts",
+          "User Auth",
+          "Dashboard"
+        ],
+        "user_roles": [
+          "sales_rep",
+          "manager",
+          "admin"
+        ],
+        "pricing_plans": [
+          {
+            "name": "Free",
+            "price": 0.0,
+            "features": [
+              "Basic usage"
+            ]
+          },
+          {
+            "name": "Premium",
+            "price": 19.99,
+            "features": [
+              "All features"
+            ]
+          }
+        ],
+        "core_operations": [
+          "CRUD users",
+          "CRUD contacts"
+        ],
+        "entities": [
+          "users",
+          "contacts"
+        ],
+        "status": "success",
+        "questions": [],
+        "app_name": "Customer Relationship Manager",
+        "roles": [
+          "sales_rep",
+          "manager",
+          "admin"
+        ]
+      },
+      "entities": [],
+      "db_schema": {
+        "tables": {
+          "users": {
+            "columns": {
+              "id": {
+                "type": "INTEGER",
+                "primary_key": true,
+                "foreign_key_to": null,
+                "nullable": false
+              },
+              "name": {
+                "type": "TEXT",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              },
+              "email": {
+                "type": "TEXT",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              },
+              "role": {
+                "type": "TEXT",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              }
+            },
+            "primary_key": "id",
+            "foreign_keys": null
+          },
+          "contacts": {
+            "columns": {
+              "id": {
+                "type": "INTEGER",
+                "primary_key": true,
+                "foreign_key_to": null,
+                "nullable": false
+              },
+              "name": {
+                "type": "TEXT",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              },
+              "email": {
+                "type": "TEXT",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              },
+              "owner_id": {
+                "type": "INTEGER",
+                "primary_key": false,
+                "foreign_key_to": "users.id",
+                "nullable": true
+              }
+            },
+            "primary_key": "id",
+            "foreign_keys": [
+              {
+                "column": "owner_id",
+                "references": "users.id"
+              }
+            ]
+          }
+        }
+      },
+      "assumptions": [],
+      "warnings": []
     },
     "id": "crm",
     "name": "Customer Relationship Manager",
@@ -293,39 +411,39 @@
   {
     "success": true,
     "retries": 1,
-    "latency": 4.359,
-    "cost": 0.03831,
-    "input_tokens": 3405,
-    "output_tokens": 1873,
-    "total_tokens": 5278,
+    "latency": 5.504,
+    "cost": 0.04362,
+    "input_tokens": 4680,
+    "output_tokens": 1972,
+    "total_tokens": 6652,
     "calls": 5,
     "errors": [],
     "logs": [
       "[SETUP] Initialized High-Fidelity Mock LLM Engine.",
       "[INTENT_EXTRACTION] Starting intent extraction stage...",
       "[INTENT_EXTRACTION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'intent_extraction'...",
-      "[INTENT_EXTRACTION] Call finished in 0.86s. Tokens: 185 in / 124 out. Cost: $0.002415",
+      "[INTENT_EXTRACTION] Call finished in 1.17s. Tokens: 315 in / 147 out. Cost: $0.003150",
       "[INTENT_EXTRACTION] Received response from LLM Client.",
       "[INTENT_EXTRACTION] Successfully extracted intent for product 'E-Commerce System' with roles: ['buyer', 'seller'].",
       "[SYSTEM_ARCHITECT] Starting system architecture generation...",
       "[SYSTEM_ARCHITECT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'system_architect'...",
-      "[SYSTEM_ARCHITECT] Call finished in 0.81s. Tokens: 378 in / 299 out. Cost: $0.005619",
+      "[SYSTEM_ARCHITECT] Call finished in 1.00s. Tokens: 401 in / 299 out. Cost: $0.005688",
       "[SYSTEM_ARCHITECT] Received response from LLM Client.",
       "[SYSTEM_ARCHITECT] Successfully generated architecture blueprint with 2 DB tables, 1 API endpoints, and 1 UI pages.",
       "[SCHEMA_GENERATION] Starting schema generation...",
       "[SCHEMA_GENERATION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'schema_generation'...",
-      "[SCHEMA_GENERATION] Call finished in 0.92s. Tokens: 621 in / 504 out. Cost: $0.009423",
+      "[SCHEMA_GENERATION] Call finished in 1.26s. Tokens: 621 in / 529 out. Cost: $0.009798",
       "[SCHEMA_GENERATION] Received response from LLM Client.",
       "[SCHEMA_GENERATION] Successfully generated and validated UnifiedAppConfigSchema for 'E-Commerce System'.",
       "[REFINEMENT] Starting refinement and alignment stage...",
       "[REFINEMENT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'refinement'...",
-      "[REFINEMENT] Call finished in 0.88s. Tokens: 1113 in / 504 out. Cost: $0.010899",
+      "[REFINEMENT] Call finished in 0.90s. Tokens: 1674 in / 529 out. Cost: $0.012957",
       "[REFINEMENT] Received response from LLM Client.",
       "[REFINEMENT] Successfully refined UnifiedAppConfigSchema for 'E-Commerce System'.",
       "[COMPILER] Compilation check failed on iteration 0 with 1 errors. Triggering repair...",
       "[REPAIR] Starting repair process for 1 error(s)...",
       "[REPAIR] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'repair'...",
-      "[REPAIR] Call finished in 0.88s. Tokens: 1108 in / 442 out. Cost: $0.009954",
+      "[REPAIR] Call finished in 1.16s. Tokens: 1669 in / 468 out. Cost: $0.012027",
       "[REPAIR] Received repaired response from LLM Client.",
       "[REPAIR] Successfully repaired configuration for 'E-Commerce System'.",
       "[COMPILER] Configuration compiled successfully on iteration 1!"
@@ -490,7 +608,100 @@
         "rules": [],
         "workflows": {}
       },
-      "pricing": null
+      "pricing": null,
+      "intent": {
+        "product_name": "E-Commerce System",
+        "features": [
+          "Manage users",
+          "Manage products",
+          "User Auth",
+          "Dashboard"
+        ],
+        "user_roles": [
+          "buyer",
+          "seller"
+        ],
+        "pricing_plans": [
+          {
+            "name": "Free",
+            "price": 0.0,
+            "features": [
+              "Basic usage"
+            ]
+          },
+          {
+            "name": "Premium",
+            "price": 19.99,
+            "features": [
+              "All features"
+            ]
+          }
+        ],
+        "core_operations": [
+          "CRUD users",
+          "CRUD products"
+        ],
+        "entities": [
+          "users",
+          "products"
+        ],
+        "status": "success",
+        "questions": [],
+        "app_name": "E-Commerce System",
+        "roles": [
+          "buyer",
+          "seller"
+        ]
+      },
+      "entities": [],
+      "db_schema": {
+        "tables": {
+          "users": {
+            "columns": {
+              "id": {
+                "type": "INTEGER",
+                "primary_key": true,
+                "foreign_key_to": null,
+                "nullable": false
+              },
+              "username": {
+                "type": "TEXT",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              }
+            },
+            "primary_key": "id",
+            "foreign_keys": null
+          },
+          "products": {
+            "columns": {
+              "id": {
+                "type": "INTEGER",
+                "primary_key": true,
+                "foreign_key_to": null,
+                "nullable": false
+              },
+              "name": {
+                "type": "TEXT",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              },
+              "price": {
+                "type": "DECIMAL",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              }
+            },
+            "primary_key": "id",
+            "foreign_keys": null
+          }
+        }
+      },
+      "assumptions": [],
+      "warnings": []
     },
     "id": "ecommerce",
     "name": "E-Commerce System",
@@ -500,39 +711,39 @@
   {
     "success": true,
     "retries": 1,
-    "latency": 5.66,
-    "cost": 0.033927,
-    "input_tokens": 2854,
-    "output_tokens": 1691,
-    "total_tokens": 4545,
+    "latency": 5.569,
+    "cost": 0.03876,
+    "input_tokens": 3910,
+    "output_tokens": 1802,
+    "total_tokens": 5712,
     "calls": 5,
     "errors": [],
     "logs": [
       "[SETUP] Initialized High-Fidelity Mock LLM Engine.",
       "[INTENT_EXTRACTION] Starting intent extraction stage...",
       "[INTENT_EXTRACTION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'intent_extraction'...",
-      "[INTENT_EXTRACTION] Call finished in 0.87s. Tokens: 182 in / 127 out. Cost: $0.002451",
+      "[INTENT_EXTRACTION] Call finished in 1.29s. Tokens: 312 in / 153 out. Cost: $0.003231",
       "[INTENT_EXTRACTION] Received response from LLM Client.",
       "[INTENT_EXTRACTION] Successfully extracted intent for product 'Inventory Stock Manager' with roles: ['clerk'].",
       "[SYSTEM_ARCHITECT] Starting system architecture generation...",
       "[SYSTEM_ARCHITECT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'system_architect'...",
-      "[SYSTEM_ARCHITECT] Call finished in 1.39s. Tokens: 381 in / 299 out. Cost: $0.005628",
+      "[SYSTEM_ARCHITECT] Call finished in 1.09s. Tokens: 407 in / 299 out. Cost: $0.005706",
       "[SYSTEM_ARCHITECT] Received response from LLM Client.",
       "[SYSTEM_ARCHITECT] Successfully generated architecture blueprint with 2 DB tables, 1 API endpoints, and 1 UI pages.",
       "[SCHEMA_GENERATION] Starting schema generation...",
       "[SCHEMA_GENERATION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'schema_generation'...",
-      "[SCHEMA_GENERATION] Call finished in 1.22s. Tokens: 622 in / 410 out. Cost: $0.008016",
+      "[SCHEMA_GENERATION] Call finished in 1.03s. Tokens: 622 in / 438 out. Cost: $0.008436",
       "[SCHEMA_GENERATION] Received response from LLM Client.",
       "[SCHEMA_GENERATION] Successfully generated and validated UnifiedAppConfigSchema for 'Inventory Stock Manager'.",
       "[REFINEMENT] Starting refinement and alignment stage...",
       "[REFINEMENT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'refinement'...",
-      "[REFINEMENT] Call finished in 0.89s. Tokens: 840 in / 410 out. Cost: $0.008670",
+      "[REFINEMENT] Call finished in 1.32s. Tokens: 1290 in / 438 out. Cost: $0.010440",
       "[REFINEMENT] Received response from LLM Client.",
       "[REFINEMENT] Successfully refined UnifiedAppConfigSchema for 'Inventory Stock Manager'.",
       "[COMPILER] Compilation check failed on iteration 0 with 1 errors. Triggering repair...",
       "[REPAIR] Starting repair process for 1 error(s)...",
       "[REPAIR] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'repair'...",
-      "[REPAIR] Call finished in 1.28s. Tokens: 829 in / 445 out. Cost: $0.009162",
+      "[REPAIR] Call finished in 0.83s. Tokens: 1279 in / 474 out. Cost: $0.010947",
       "[REPAIR] Received repaired response from LLM Client.",
       "[REPAIR] Successfully repaired configuration for 'Inventory Stock Manager'.",
       "[COMPILER] Configuration compiled successfully on iteration 1!"
@@ -687,7 +898,103 @@
         "rules": [],
         "workflows": {}
       },
-      "pricing": null
+      "pricing": null,
+      "intent": {
+        "product_name": "Inventory Stock Manager",
+        "features": [
+          "Manage suppliers",
+          "Manage inventory_items",
+          "User Auth",
+          "Dashboard"
+        ],
+        "user_roles": [
+          "clerk"
+        ],
+        "pricing_plans": [
+          {
+            "name": "Free",
+            "price": 0.0,
+            "features": [
+              "Basic usage"
+            ]
+          },
+          {
+            "name": "Premium",
+            "price": 19.99,
+            "features": [
+              "All features"
+            ]
+          }
+        ],
+        "core_operations": [
+          "CRUD suppliers",
+          "CRUD inventory_items"
+        ],
+        "entities": [
+          "suppliers",
+          "inventory_items"
+        ],
+        "status": "success",
+        "questions": [],
+        "app_name": "Inventory Stock Manager",
+        "roles": [
+          "clerk"
+        ]
+      },
+      "entities": [],
+      "db_schema": {
+        "tables": {
+          "suppliers": {
+            "columns": {
+              "id": {
+                "type": "INTEGER",
+                "primary_key": true,
+                "foreign_key_to": null,
+                "nullable": false
+              },
+              "name": {
+                "type": "TEXT",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              }
+            },
+            "primary_key": "id",
+            "foreign_keys": null
+          },
+          "inventory_items": {
+            "columns": {
+              "id": {
+                "type": "INTEGER",
+                "primary_key": true,
+                "foreign_key_to": null,
+                "nullable": false
+              },
+              "name": {
+                "type": "TEXT",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              },
+              "supplier_id": {
+                "type": "INTEGER",
+                "primary_key": false,
+                "foreign_key_to": "suppliers.id",
+                "nullable": true
+              }
+            },
+            "primary_key": "id",
+            "foreign_keys": [
+              {
+                "column": "supplier_id",
+                "references": "suppliers.id"
+              }
+            ]
+          }
+        }
+      },
+      "assumptions": [],
+      "warnings": []
     },
     "id": "inventory",
     "name": "Inventory Stock Manager",
@@ -697,39 +1004,39 @@
   {
     "success": true,
     "retries": 1,
-    "latency": 5.898,
-    "cost": 0.033984,
-    "input_tokens": 3093,
-    "output_tokens": 1647,
-    "total_tokens": 4740,
+    "latency": 5.634,
+    "cost": 0.039,
+    "input_tokens": 4280,
+    "output_tokens": 1744,
+    "total_tokens": 6024,
     "calls": 5,
     "errors": [],
     "logs": [
       "[SETUP] Initialized High-Fidelity Mock LLM Engine.",
       "[INTENT_EXTRACTION] Starting intent extraction stage...",
       "[INTENT_EXTRACTION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'intent_extraction'...",
-      "[INTENT_EXTRACTION] Call finished in 1.40s. Tokens: 184 in / 123 out. Cost: $0.002397",
+      "[INTENT_EXTRACTION] Call finished in 1.38s. Tokens: 314 in / 145 out. Cost: $0.003117",
       "[INTENT_EXTRACTION] Received response from LLM Client.",
       "[INTENT_EXTRACTION] Successfully extracted intent for product 'Blogging Platform' with roles: ['author', 'reader'].",
       "[SYSTEM_ARCHITECT] Starting system architecture generation...",
       "[SYSTEM_ARCHITECT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'system_architect'...",
-      "[SYSTEM_ARCHITECT] Call finished in 1.11s. Tokens: 377 in / 273 out. Cost: $0.005226",
+      "[SYSTEM_ARCHITECT] Call finished in 0.91s. Tokens: 399 in / 273 out. Cost: $0.005292",
       "[SYSTEM_ARCHITECT] Received response from LLM Client.",
       "[SYSTEM_ARCHITECT] Successfully generated architecture blueprint with 2 DB tables, 1 API endpoints, and 1 UI pages.",
       "[SCHEMA_GENERATION] Starting schema generation...",
       "[SCHEMA_GENERATION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'schema_generation'...",
-      "[SCHEMA_GENERATION] Call finished in 1.00s. Tokens: 596 in / 418 out. Cost: $0.008058",
+      "[SCHEMA_GENERATION] Call finished in 1.31s. Tokens: 596 in / 443 out. Cost: $0.008433",
       "[SCHEMA_GENERATION] Received response from LLM Client.",
       "[SCHEMA_GENERATION] Successfully generated and validated UnifiedAppConfigSchema for 'Blogging Platform'.",
       "[REFINEMENT] Starting refinement and alignment stage...",
       "[REFINEMENT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'refinement'...",
-      "[REFINEMENT] Call finished in 1.31s. Tokens: 975 in / 418 out. Cost: $0.009195",
+      "[REFINEMENT] Call finished in 0.99s. Tokens: 1492 in / 443 out. Cost: $0.011121",
       "[REFINEMENT] Received response from LLM Client.",
       "[REFINEMENT] Successfully refined UnifiedAppConfigSchema for 'Blogging Platform'.",
       "[COMPILER] Compilation check failed on iteration 0 with 1 errors. Triggering repair...",
       "[REPAIR] Starting repair process for 1 error(s)...",
       "[REPAIR] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'repair'...",
-      "[REPAIR] Call finished in 1.06s. Tokens: 961 in / 415 out. Cost: $0.009108",
+      "[REPAIR] Call finished in 1.04s. Tokens: 1479 in / 440 out. Cost: $0.011037",
       "[REPAIR] Received repaired response from LLM Client.",
       "[REPAIR] Successfully repaired configuration for 'Blogging Platform'.",
       "[COMPILER] Configuration compiled successfully on iteration 1!"
@@ -891,7 +1198,100 @@
         "rules": [],
         "workflows": {}
       },
-      "pricing": null
+      "pricing": null,
+      "intent": {
+        "product_name": "Blogging Platform",
+        "features": [
+          "Manage users",
+          "Manage posts",
+          "User Auth",
+          "Dashboard"
+        ],
+        "user_roles": [
+          "author",
+          "reader"
+        ],
+        "pricing_plans": [
+          {
+            "name": "Free",
+            "price": 0.0,
+            "features": [
+              "Basic usage"
+            ]
+          },
+          {
+            "name": "Premium",
+            "price": 19.99,
+            "features": [
+              "All features"
+            ]
+          }
+        ],
+        "core_operations": [
+          "CRUD users",
+          "CRUD posts"
+        ],
+        "entities": [
+          "users",
+          "posts"
+        ],
+        "status": "success",
+        "questions": [],
+        "app_name": "Blogging Platform",
+        "roles": [
+          "author",
+          "reader"
+        ]
+      },
+      "entities": [],
+      "db_schema": {
+        "tables": {
+          "users": {
+            "columns": {
+              "id": {
+                "type": "INTEGER",
+                "primary_key": true,
+                "foreign_key_to": null,
+                "nullable": false
+              },
+              "name": {
+                "type": "TEXT",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              },
+              "role": {
+                "type": "TEXT",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              }
+            },
+            "primary_key": "id",
+            "foreign_keys": null
+          },
+          "posts": {
+            "columns": {
+              "id": {
+                "type": "INTEGER",
+                "primary_key": true,
+                "foreign_key_to": null,
+                "nullable": false
+              },
+              "title": {
+                "type": "TEXT",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              }
+            },
+            "primary_key": "id",
+            "foreign_keys": null
+          }
+        }
+      },
+      "assumptions": [],
+      "warnings": []
     },
     "id": "blog",
     "name": "Blogging Platform",
@@ -901,39 +1301,39 @@
   {
     "success": true,
     "retries": 1,
-    "latency": 5.714,
-    "cost": 0.030369,
-    "input_tokens": 2783,
-    "output_tokens": 1468,
-    "total_tokens": 4251,
+    "latency": 5.08,
+    "cost": 0.03471,
+    "input_tokens": 3745,
+    "output_tokens": 1565,
+    "total_tokens": 5310,
     "calls": 5,
     "errors": [],
     "logs": [
       "[SETUP] Initialized High-Fidelity Mock LLM Engine.",
       "[INTENT_EXTRACTION] Starting intent extraction stage...",
       "[INTENT_EXTRACTION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'intent_extraction'...",
-      "[INTENT_EXTRACTION] Call finished in 1.39s. Tokens: 179 in / 117 out. Cost: $0.002292",
+      "[INTENT_EXTRACTION] Call finished in 1.00s. Tokens: 309 in / 139 out. Cost: $0.003012",
       "[INTENT_EXTRACTION] Received response from LLM Client.",
       "[INTENT_EXTRACTION] Successfully extracted intent for product 'Learning Management System' with roles: ['teacher', 'student'].",
       "[SYSTEM_ARCHITECT] Starting system architecture generation...",
       "[SYSTEM_ARCHITECT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'system_architect'...",
-      "[SYSTEM_ARCHITECT] Call finished in 0.84s. Tokens: 371 in / 236 out. Cost: $0.004653",
+      "[SYSTEM_ARCHITECT] Call finished in 0.92s. Tokens: 393 in / 236 out. Cost: $0.004719",
       "[SYSTEM_ARCHITECT] Received response from LLM Client.",
       "[SYSTEM_ARCHITECT] Successfully generated architecture blueprint with 1 DB tables, 1 API endpoints, and 1 UI pages.",
       "[SCHEMA_GENERATION] Starting schema generation...",
       "[SCHEMA_GENERATION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'schema_generation'...",
-      "[SCHEMA_GENERATION] Call finished in 1.05s. Tokens: 558 in / 372 out. Cost: $0.007254",
+      "[SCHEMA_GENERATION] Call finished in 1.07s. Tokens: 558 in / 397 out. Cost: $0.007629",
       "[SCHEMA_GENERATION] Received response from LLM Client.",
       "[SCHEMA_GENERATION] Successfully generated and validated UnifiedAppConfigSchema for 'Learning Management System'.",
       "[REFINEMENT] Starting refinement and alignment stage...",
       "[REFINEMENT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'refinement'...",
-      "[REFINEMENT] Call finished in 1.30s. Tokens: 822 in / 372 out. Cost: $0.008046",
+      "[REFINEMENT] Call finished in 0.99s. Tokens: 1227 in / 397 out. Cost: $0.009636",
       "[REFINEMENT] Received response from LLM Client.",
       "[REFINEMENT] Successfully refined UnifiedAppConfigSchema for 'Learning Management System'.",
       "[COMPILER] Compilation check failed on iteration 0 with 2 errors. Triggering repair...",
       "[REPAIR] Starting repair process for 2 error(s)...",
       "[REPAIR] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'repair'...",
-      "[REPAIR] Call finished in 1.13s. Tokens: 853 in / 371 out. Cost: $0.008124",
+      "[REPAIR] Call finished in 1.04s. Tokens: 1258 in / 396 out. Cost: $0.009714",
       "[REPAIR] Received repaired response from LLM Client.",
       "[REPAIR] Successfully repaired configuration for 'Learning Management System'.",
       "[COMPILER] Configuration compiled successfully on iteration 1!"
@@ -1066,7 +1466,74 @@
         "rules": [],
         "workflows": {}
       },
-      "pricing": null
+      "pricing": null,
+      "intent": {
+        "product_name": "Learning Management System",
+        "features": [
+          "Manage courses",
+          "User Auth",
+          "Dashboard"
+        ],
+        "user_roles": [
+          "teacher",
+          "student"
+        ],
+        "pricing_plans": [
+          {
+            "name": "Free",
+            "price": 0.0,
+            "features": [
+              "Basic usage"
+            ]
+          },
+          {
+            "name": "Premium",
+            "price": 19.99,
+            "features": [
+              "All features"
+            ]
+          }
+        ],
+        "core_operations": [
+          "CRUD courses"
+        ],
+        "entities": [
+          "courses",
+          "users"
+        ],
+        "status": "success",
+        "questions": [],
+        "app_name": "Learning Management System",
+        "roles": [
+          "teacher",
+          "student"
+        ]
+      },
+      "entities": [],
+      "db_schema": {
+        "tables": {
+          "courses": {
+            "columns": {
+              "id": {
+                "type": "INTEGER",
+                "primary_key": true,
+                "foreign_key_to": null,
+                "nullable": false
+              },
+              "title": {
+                "type": "TEXT",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              }
+            },
+            "primary_key": "id",
+            "foreign_keys": null
+          }
+        }
+      },
+      "assumptions": [],
+      "warnings": []
     },
     "id": "lms",
     "name": "Learning Management System",
@@ -1076,39 +1543,39 @@
   {
     "success": true,
     "retries": 1,
-    "latency": 5.244,
-    "cost": 0.033456,
-    "input_tokens": 2927,
-    "output_tokens": 1645,
-    "total_tokens": 4572,
+    "latency": 5.222,
+    "cost": 0.037746,
+    "input_tokens": 3872,
+    "output_tokens": 1742,
+    "total_tokens": 5614,
     "calls": 5,
     "errors": [],
     "logs": [
       "[SETUP] Initialized High-Fidelity Mock LLM Engine.",
       "[INTENT_EXTRACTION] Starting intent extraction stage...",
       "[INTENT_EXTRACTION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'intent_extraction'...",
-      "[INTENT_EXTRACTION] Call finished in 1.02s. Tokens: 177 in / 111 out. Cost: $0.002196",
+      "[INTENT_EXTRACTION] Call finished in 1.26s. Tokens: 307 in / 133 out. Cost: $0.002916",
       "[INTENT_EXTRACTION] Received response from LLM Client.",
       "[INTENT_EXTRACTION] Successfully extracted intent for product 'Task Manager Platform' with roles: ['member'].",
       "[SYSTEM_ARCHITECT] Starting system architecture generation...",
       "[SYSTEM_ARCHITECT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'system_architect'...",
-      "[SYSTEM_ARCHITECT] Call finished in 0.87s. Tokens: 365 in / 287 out. Cost: $0.005400",
+      "[SYSTEM_ARCHITECT] Call finished in 0.90s. Tokens: 387 in / 287 out. Cost: $0.005466",
       "[SYSTEM_ARCHITECT] Received response from LLM Client.",
       "[SYSTEM_ARCHITECT] Successfully generated architecture blueprint with 1 DB tables, 1 API endpoints, and 1 UI pages.",
       "[SCHEMA_GENERATION] Starting schema generation...",
       "[SCHEMA_GENERATION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'schema_generation'...",
-      "[SCHEMA_GENERATION] Call finished in 1.12s. Tokens: 609 in / 416 out. Cost: $0.008067",
+      "[SCHEMA_GENERATION] Call finished in 1.36s. Tokens: 609 in / 441 out. Cost: $0.008442",
       "[SCHEMA_GENERATION] Received response from LLM Client.",
       "[SCHEMA_GENERATION] Successfully generated and validated UnifiedAppConfigSchema for 'Task Manager Platform'.",
       "[REFINEMENT] Starting refinement and alignment stage...",
       "[REFINEMENT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'refinement'...",
-      "[REFINEMENT] Call finished in 1.19s. Tokens: 893 in / 416 out. Cost: $0.008919",
+      "[REFINEMENT] Call finished in 0.87s. Tokens: 1290 in / 441 out. Cost: $0.010485",
       "[REFINEMENT] Received response from LLM Client.",
       "[REFINEMENT] Successfully refined UnifiedAppConfigSchema for 'Task Manager Platform'.",
       "[COMPILER] Compilation check failed on iteration 0 with 1 errors. Triggering repair...",
       "[REPAIR] Starting repair process for 1 error(s)...",
       "[REPAIR] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'repair'...",
-      "[REPAIR] Call finished in 1.04s. Tokens: 883 in / 415 out. Cost: $0.008874",
+      "[REPAIR] Call finished in 0.83s. Tokens: 1279 in / 440 out. Cost: $0.010437",
       "[REPAIR] Received repaired response from LLM Client.",
       "[REPAIR] Successfully repaired configuration for 'Task Manager Platform'.",
       "[COMPILER] Configuration compiled successfully on iteration 1!"
@@ -1253,7 +1720,78 @@
         "rules": [],
         "workflows": {}
       },
-      "pricing": null
+      "pricing": null,
+      "intent": {
+        "product_name": "Task Manager Platform",
+        "features": [
+          "Manage tasks",
+          "User Auth",
+          "Dashboard"
+        ],
+        "user_roles": [
+          "member"
+        ],
+        "pricing_plans": [
+          {
+            "name": "Free",
+            "price": 0.0,
+            "features": [
+              "Basic usage"
+            ]
+          },
+          {
+            "name": "Premium",
+            "price": 19.99,
+            "features": [
+              "All features"
+            ]
+          }
+        ],
+        "core_operations": [
+          "CRUD tasks"
+        ],
+        "entities": [
+          "tasks",
+          "users"
+        ],
+        "status": "success",
+        "questions": [],
+        "app_name": "Task Manager Platform",
+        "roles": [
+          "member"
+        ]
+      },
+      "entities": [],
+      "db_schema": {
+        "tables": {
+          "tasks": {
+            "columns": {
+              "id": {
+                "type": "INTEGER",
+                "primary_key": true,
+                "foreign_key_to": null,
+                "nullable": false
+              },
+              "title": {
+                "type": "TEXT",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              },
+              "assignee_id": {
+                "type": "INTEGER",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              }
+            },
+            "primary_key": "id",
+            "foreign_keys": null
+          }
+        }
+      },
+      "assumptions": [],
+      "warnings": []
     },
     "id": "taskmanager",
     "name": "Task Manager Platform",
@@ -1263,39 +1801,39 @@
   {
     "success": true,
     "retries": 1,
-    "latency": 6.71,
-    "cost": 0.030225,
-    "input_tokens": 2745,
-    "output_tokens": 1466,
-    "total_tokens": 4211,
+    "latency": 4.953,
+    "cost": 0.034542,
+    "input_tokens": 3689,
+    "output_tokens": 1565,
+    "total_tokens": 5254,
     "calls": 5,
     "errors": [],
     "logs": [
       "[SETUP] Initialized High-Fidelity Mock LLM Engine.",
       "[INTENT_EXTRACTION] Starting intent extraction stage...",
       "[INTENT_EXTRACTION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'intent_extraction'...",
-      "[INTENT_EXTRACTION] Call finished in 1.27s. Tokens: 175 in / 113 out. Cost: $0.002220",
+      "[INTENT_EXTRACTION] Call finished in 1.29s. Tokens: 305 in / 135 out. Cost: $0.002940",
       "[INTENT_EXTRACTION] Received response from LLM Client.",
       "[INTENT_EXTRACTION] Successfully extracted intent for product 'Event Planner Hub' with roles: ['host', 'guest'].",
       "[SYSTEM_ARCHITECT] Starting system architecture generation...",
       "[SYSTEM_ARCHITECT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'system_architect'...",
-      "[SYSTEM_ARCHITECT] Call finished in 1.31s. Tokens: 367 in / 241 out. Cost: $0.004716",
+      "[SYSTEM_ARCHITECT] Call finished in 1.01s. Tokens: 389 in / 241 out. Cost: $0.004782",
       "[SYSTEM_ARCHITECT] Received response from LLM Client.",
       "[SYSTEM_ARCHITECT] Successfully generated architecture blueprint with 1 DB tables, 1 API endpoints, and 1 UI pages.",
       "[SCHEMA_GENERATION] Starting schema generation...",
       "[SCHEMA_GENERATION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'schema_generation'...",
-      "[SCHEMA_GENERATION] Call finished in 1.39s. Tokens: 563 in / 370 out. Cost: $0.007239",
+      "[SCHEMA_GENERATION] Call finished in 0.99s. Tokens: 563 in / 396 out. Cost: $0.007629",
       "[SCHEMA_GENERATION] Received response from LLM Client.",
       "[SCHEMA_GENERATION] Successfully generated and validated UnifiedAppConfigSchema for 'Event Planner Hub'.",
       "[REFINEMENT] Starting refinement and alignment stage...",
       "[REFINEMENT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'refinement'...",
-      "[REFINEMENT] Call finished in 1.36s. Tokens: 824 in / 370 out. Cost: $0.008022",
+      "[REFINEMENT] Call finished in 0.85s. Tokens: 1220 in / 396 out. Cost: $0.009600",
       "[REFINEMENT] Received response from LLM Client.",
       "[REFINEMENT] Successfully refined UnifiedAppConfigSchema for 'Event Planner Hub'.",
       "[COMPILER] Compilation check failed on iteration 0 with 1 errors. Triggering repair...",
       "[REPAIR] Starting repair process for 1 error(s)...",
       "[REPAIR] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'repair'...",
-      "[REPAIR] Call finished in 1.36s. Tokens: 816 in / 372 out. Cost: $0.008028",
+      "[REPAIR] Call finished in 0.81s. Tokens: 1212 in / 397 out. Cost: $0.009591",
       "[REPAIR] Received repaired response from LLM Client.",
       "[REPAIR] Successfully repaired configuration for 'Event Planner Hub'.",
       "[COMPILER] Configuration compiled successfully on iteration 1!"
@@ -1434,7 +1972,74 @@
         "rules": [],
         "workflows": {}
       },
-      "pricing": null
+      "pricing": null,
+      "intent": {
+        "product_name": "Event Planner Hub",
+        "features": [
+          "Manage events",
+          "User Auth",
+          "Dashboard"
+        ],
+        "user_roles": [
+          "host",
+          "guest"
+        ],
+        "pricing_plans": [
+          {
+            "name": "Free",
+            "price": 0.0,
+            "features": [
+              "Basic usage"
+            ]
+          },
+          {
+            "name": "Premium",
+            "price": 19.99,
+            "features": [
+              "All features"
+            ]
+          }
+        ],
+        "core_operations": [
+          "CRUD events"
+        ],
+        "entities": [
+          "events",
+          "users"
+        ],
+        "status": "success",
+        "questions": [],
+        "app_name": "Event Planner Hub",
+        "roles": [
+          "host",
+          "guest"
+        ]
+      },
+      "entities": [],
+      "db_schema": {
+        "tables": {
+          "events": {
+            "columns": {
+              "id": {
+                "type": "INTEGER",
+                "primary_key": true,
+                "foreign_key_to": null,
+                "nullable": false
+              },
+              "title": {
+                "type": "TEXT",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              }
+            },
+            "primary_key": "id",
+            "foreign_keys": null
+          }
+        }
+      },
+      "assumptions": [],
+      "warnings": []
     },
     "id": "eventplanner",
     "name": "Event Planner Hub",
@@ -1444,39 +2049,39 @@
   {
     "success": true,
     "retries": 1,
-    "latency": 6.171,
-    "cost": 0.028962,
-    "input_tokens": 2654,
-    "output_tokens": 1400,
-    "total_tokens": 4054,
+    "latency": 5.516,
+    "cost": 0.033057,
+    "input_tokens": 3519,
+    "output_tokens": 1500,
+    "total_tokens": 5019,
     "calls": 5,
     "errors": [],
     "logs": [
       "[SETUP] Initialized High-Fidelity Mock LLM Engine.",
       "[INTENT_EXTRACTION] Starting intent extraction stage...",
       "[INTENT_EXTRACTION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'intent_extraction'...",
-      "[INTENT_EXTRACTION] Call finished in 1.35s. Tokens: 172 in / 111 out. Cost: $0.002181",
+      "[INTENT_EXTRACTION] Call finished in 1.09s. Tokens: 302 in / 134 out. Cost: $0.002916",
       "[INTENT_EXTRACTION] Received response from LLM Client.",
       "[INTENT_EXTRACTION] Successfully extracted intent for product 'Fitness Tracker App' with roles: ['user'].",
       "[SYSTEM_ARCHITECT] Starting system architecture generation...",
       "[SYSTEM_ARCHITECT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'system_architect'...",
-      "[SYSTEM_ARCHITECT] Call finished in 1.31s. Tokens: 365 in / 226 out. Cost: $0.004485",
+      "[SYSTEM_ARCHITECT] Call finished in 0.84s. Tokens: 388 in / 226 out. Cost: $0.004554",
       "[SYSTEM_ARCHITECT] Received response from LLM Client.",
       "[SYSTEM_ARCHITECT] Successfully generated architecture blueprint with 1 DB tables, 1 API endpoints, and 1 UI pages.",
       "[SCHEMA_GENERATION] Starting schema generation...",
       "[SCHEMA_GENERATION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'schema_generation'...",
-      "[SCHEMA_GENERATION] Call finished in 1.18s. Tokens: 548 in / 354 out. Cost: $0.006954",
+      "[SCHEMA_GENERATION] Call finished in 1.21s. Tokens: 548 in / 380 out. Cost: $0.007344",
       "[SCHEMA_GENERATION] Received response from LLM Client.",
       "[SCHEMA_GENERATION] Successfully generated and validated UnifiedAppConfigSchema for 'Fitness Tracker App'.",
       "[REFINEMENT] Starting refinement and alignment stage...",
       "[REFINEMENT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'refinement'...",
-      "[REFINEMENT] Call finished in 0.96s. Tokens: 789 in / 354 out. Cost: $0.007677",
+      "[REFINEMENT] Call finished in 1.40s. Tokens: 1145 in / 380 out. Cost: $0.009135",
       "[REFINEMENT] Received response from LLM Client.",
       "[REFINEMENT] Successfully refined UnifiedAppConfigSchema for 'Fitness Tracker App'.",
       "[COMPILER] Compilation check failed on iteration 0 with 1 errors. Triggering repair...",
       "[REPAIR] Starting repair process for 1 error(s)...",
       "[REPAIR] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'repair'...",
-      "[REPAIR] Call finished in 1.37s. Tokens: 780 in / 355 out. Cost: $0.007665",
+      "[REPAIR] Call finished in 0.97s. Tokens: 1136 in / 380 out. Cost: $0.009108",
       "[REPAIR] Received repaired response from LLM Client.",
       "[REPAIR] Successfully repaired configuration for 'Fitness Tracker App'.",
       "[COMPILER] Configuration compiled successfully on iteration 1!"
@@ -1604,7 +2209,72 @@
         "rules": [],
         "workflows": {}
       },
-      "pricing": null
+      "pricing": null,
+      "intent": {
+        "product_name": "Fitness Tracker App",
+        "features": [
+          "Manage workouts",
+          "User Auth",
+          "Dashboard"
+        ],
+        "user_roles": [
+          "user"
+        ],
+        "pricing_plans": [
+          {
+            "name": "Free",
+            "price": 0.0,
+            "features": [
+              "Basic usage"
+            ]
+          },
+          {
+            "name": "Premium",
+            "price": 19.99,
+            "features": [
+              "All features"
+            ]
+          }
+        ],
+        "core_operations": [
+          "CRUD workouts"
+        ],
+        "entities": [
+          "workouts",
+          "users"
+        ],
+        "status": "success",
+        "questions": [],
+        "app_name": "Fitness Tracker App",
+        "roles": [
+          "user"
+        ]
+      },
+      "entities": [],
+      "db_schema": {
+        "tables": {
+          "workouts": {
+            "columns": {
+              "id": {
+                "type": "INTEGER",
+                "primary_key": true,
+                "foreign_key_to": null,
+                "nullable": false
+              },
+              "duration": {
+                "type": "INTEGER",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              }
+            },
+            "primary_key": "id",
+            "foreign_keys": null
+          }
+        }
+      },
+      "assumptions": [],
+      "warnings": []
     },
     "id": "fitnesstracker",
     "name": "Fitness Tracker App",
@@ -1614,39 +2284,39 @@
   {
     "success": true,
     "retries": 1,
-    "latency": 6.244,
-    "cost": 0.028929,
-    "input_tokens": 2708,
-    "output_tokens": 1387,
-    "total_tokens": 4095,
+    "latency": 5.608,
+    "cost": 0.033054,
+    "input_tokens": 3583,
+    "output_tokens": 1487,
+    "total_tokens": 5070,
     "calls": 5,
     "errors": [],
     "logs": [
       "[SETUP] Initialized High-Fidelity Mock LLM Engine.",
       "[INTENT_EXTRACTION] Starting intent extraction stage...",
       "[INTENT_EXTRACTION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'intent_extraction'...",
-      "[INTENT_EXTRACTION] Call finished in 1.24s. Tokens: 174 in / 114 out. Cost: $0.002232",
+      "[INTENT_EXTRACTION] Call finished in 1.14s. Tokens: 304 in / 136 out. Cost: $0.002952",
       "[INTENT_EXTRACTION] Received response from LLM Client.",
       "[INTENT_EXTRACTION] Successfully extracted intent for product 'Corporate Expense Manager' with roles: ['employee'].",
       "[SYSTEM_ARCHITECT] Starting system architecture generation...",
       "[SYSTEM_ARCHITECT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'system_architect'...",
-      "[SYSTEM_ARCHITECT] Call finished in 1.34s. Tokens: 368 in / 221 out. Cost: $0.004419",
+      "[SYSTEM_ARCHITECT] Call finished in 0.98s. Tokens: 390 in / 221 out. Cost: $0.004485",
       "[SYSTEM_ARCHITECT] Received response from LLM Client.",
       "[SYSTEM_ARCHITECT] Successfully generated architecture blueprint with 1 DB tables, 1 API endpoints, and 1 UI pages.",
       "[SCHEMA_GENERATION] Starting schema generation...",
       "[SCHEMA_GENERATION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'schema_generation'...",
-      "[SCHEMA_GENERATION] Call finished in 1.31s. Tokens: 543 in / 350 out. Cost: $0.006879",
+      "[SCHEMA_GENERATION] Call finished in 0.99s. Tokens: 543 in / 376 out. Cost: $0.007269",
       "[SCHEMA_GENERATION] Received response from LLM Client.",
       "[SCHEMA_GENERATION] Successfully generated and validated UnifiedAppConfigSchema for 'Corporate Expense Manager'.",
       "[REFINEMENT] Starting refinement and alignment stage...",
       "[REFINEMENT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'refinement'...",
-      "[REFINEMENT] Call finished in 1.06s. Tokens: 816 in / 350 out. Cost: $0.007698",
+      "[REFINEMENT] Call finished in 1.08s. Tokens: 1177 in / 376 out. Cost: $0.009171",
       "[REFINEMENT] Received response from LLM Client.",
       "[REFINEMENT] Successfully refined UnifiedAppConfigSchema for 'Corporate Expense Manager'.",
       "[COMPILER] Compilation check failed on iteration 0 with 1 errors. Triggering repair...",
       "[REPAIR] Starting repair process for 1 error(s)...",
       "[REPAIR] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'repair'...",
-      "[REPAIR] Call finished in 1.28s. Tokens: 807 in / 352 out. Cost: $0.007701",
+      "[REPAIR] Call finished in 1.41s. Tokens: 1169 in / 378 out. Cost: $0.009177",
       "[REPAIR] Received repaired response from LLM Client.",
       "[REPAIR] Successfully repaired configuration for 'Corporate Expense Manager'.",
       "[COMPILER] Configuration compiled successfully on iteration 1!"
@@ -1777,7 +2447,72 @@
         "rules": [],
         "workflows": {}
       },
-      "pricing": null
+      "pricing": null,
+      "intent": {
+        "product_name": "Corporate Expense Manager",
+        "features": [
+          "Manage expenses",
+          "User Auth",
+          "Dashboard"
+        ],
+        "user_roles": [
+          "employee"
+        ],
+        "pricing_plans": [
+          {
+            "name": "Free",
+            "price": 0.0,
+            "features": [
+              "Basic usage"
+            ]
+          },
+          {
+            "name": "Premium",
+            "price": 19.99,
+            "features": [
+              "All features"
+            ]
+          }
+        ],
+        "core_operations": [
+          "CRUD expenses"
+        ],
+        "entities": [
+          "expenses",
+          "users"
+        ],
+        "status": "success",
+        "questions": [],
+        "app_name": "Corporate Expense Manager",
+        "roles": [
+          "employee"
+        ]
+      },
+      "entities": [],
+      "db_schema": {
+        "tables": {
+          "expenses": {
+            "columns": {
+              "id": {
+                "type": "INTEGER",
+                "primary_key": true,
+                "foreign_key_to": null,
+                "nullable": false
+              },
+              "amount": {
+                "type": "DECIMAL",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              }
+            },
+            "primary_key": "id",
+            "foreign_keys": null
+          }
+        }
+      },
+      "assumptions": [],
+      "warnings": []
     },
     "id": "expensemanager",
     "name": "Corporate Expense Manager",
@@ -1787,39 +2522,39 @@
   {
     "success": true,
     "retries": 1,
-    "latency": 5.565,
-    "cost": 0.031035,
-    "input_tokens": 2800,
-    "output_tokens": 1509,
-    "total_tokens": 4309,
+    "latency": 5.192,
+    "cost": 0.035421,
+    "input_tokens": 3757,
+    "output_tokens": 1610,
+    "total_tokens": 5367,
     "calls": 5,
     "errors": [],
     "logs": [
       "[SETUP] Initialized High-Fidelity Mock LLM Engine.",
       "[INTENT_EXTRACTION] Starting intent extraction stage...",
       "[INTENT_EXTRACTION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'intent_extraction'...",
-      "[INTENT_EXTRACTION] Call finished in 1.27s. Tokens: 176 in / 115 out. Cost: $0.002253",
+      "[INTENT_EXTRACTION] Call finished in 1.27s. Tokens: 306 in / 138 out. Cost: $0.002988",
       "[INTENT_EXTRACTION] Received response from LLM Client.",
       "[INTENT_EXTRACTION] Successfully extracted intent for product 'Room Booking System' with roles: ['customer', 'admin'].",
       "[SYSTEM_ARCHITECT] Starting system architecture generation...",
       "[SYSTEM_ARCHITECT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'system_architect'...",
-      "[SYSTEM_ARCHITECT] Call finished in 0.95s. Tokens: 369 in / 251 out. Cost: $0.004872",
+      "[SYSTEM_ARCHITECT] Call finished in 1.05s. Tokens: 392 in / 251 out. Cost: $0.004941",
       "[SYSTEM_ARCHITECT] Received response from LLM Client.",
       "[SYSTEM_ARCHITECT] Successfully generated architecture blueprint with 1 DB tables, 1 API endpoints, and 1 UI pages.",
       "[SCHEMA_GENERATION] Starting schema generation...",
       "[SCHEMA_GENERATION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'schema_generation'...",
-      "[SCHEMA_GENERATION] Call finished in 1.05s. Tokens: 574 in / 379 out. Cost: $0.007407",
+      "[SCHEMA_GENERATION] Call finished in 0.88s. Tokens: 574 in / 405 out. Cost: $0.007797",
       "[SCHEMA_GENERATION] Received response from LLM Client.",
       "[SCHEMA_GENERATION] Successfully generated and validated UnifiedAppConfigSchema for 'Room Booking System'.",
       "[REFINEMENT] Starting refinement and alignment stage...",
       "[REFINEMENT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'refinement'...",
-      "[REFINEMENT] Call finished in 1.18s. Tokens: 836 in / 379 out. Cost: $0.008193",
+      "[REFINEMENT] Call finished in 1.03s. Tokens: 1238 in / 405 out. Cost: $0.009789",
       "[REFINEMENT] Received response from LLM Client.",
       "[REFINEMENT] Successfully refined UnifiedAppConfigSchema for 'Room Booking System'.",
       "[COMPILER] Compilation check failed on iteration 0 with 1 errors. Triggering repair...",
       "[REPAIR] Starting repair process for 1 error(s)...",
       "[REPAIR] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'repair'...",
-      "[REPAIR] Call finished in 1.11s. Tokens: 845 in / 385 out. Cost: $0.008310",
+      "[REPAIR] Call finished in 0.95s. Tokens: 1247 in / 411 out. Cost: $0.009906",
       "[REPAIR] Received repaired response from LLM Client.",
       "[REPAIR] Successfully repaired configuration for 'Room Booking System'.",
       "[COMPILER] Configuration compiled successfully on iteration 1!"
@@ -1957,7 +2692,74 @@
         "rules": [],
         "workflows": {}
       },
-      "pricing": null
+      "pricing": null,
+      "intent": {
+        "product_name": "Room Booking System",
+        "features": [
+          "Manage bookings",
+          "User Auth",
+          "Dashboard"
+        ],
+        "user_roles": [
+          "customer",
+          "admin"
+        ],
+        "pricing_plans": [
+          {
+            "name": "Free",
+            "price": 0.0,
+            "features": [
+              "Basic usage"
+            ]
+          },
+          {
+            "name": "Premium",
+            "price": 19.99,
+            "features": [
+              "All features"
+            ]
+          }
+        ],
+        "core_operations": [
+          "CRUD bookings"
+        ],
+        "entities": [
+          "bookings",
+          "users"
+        ],
+        "status": "success",
+        "questions": [],
+        "app_name": "Room Booking System",
+        "roles": [
+          "customer",
+          "admin"
+        ]
+      },
+      "entities": [],
+      "db_schema": {
+        "tables": {
+          "bookings": {
+            "columns": {
+              "id": {
+                "type": "INTEGER",
+                "primary_key": true,
+                "foreign_key_to": null,
+                "nullable": false
+              },
+              "room": {
+                "type": "TEXT",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              }
+            },
+            "primary_key": "id",
+            "foreign_keys": null
+          }
+        }
+      },
+      "assumptions": [],
+      "warnings": []
     },
     "id": "bookingsystem",
     "name": "Room Booking System",
@@ -1967,33 +2769,33 @@
   {
     "success": true,
     "retries": 0,
-    "latency": 4.132,
-    "cost": 0.022389,
-    "input_tokens": 1948,
-    "output_tokens": 1103,
-    "total_tokens": 3051,
+    "latency": 4.303,
+    "cost": 0.02511,
+    "input_tokens": 2495,
+    "output_tokens": 1175,
+    "total_tokens": 3670,
     "calls": 4,
     "errors": [],
     "logs": [
       "[SETUP] Initialized High-Fidelity Mock LLM Engine.",
       "[INTENT_EXTRACTION] Starting intent extraction stage...",
       "[INTENT_EXTRACTION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'intent_extraction'...",
-      "[INTENT_EXTRACTION] Call finished in 0.91s. Tokens: 185 in / 112 out. Cost: $0.002235",
+      "[INTENT_EXTRACTION] Call finished in 0.92s. Tokens: 315 in / 134 out. Cost: $0.002955",
       "[INTENT_EXTRACTION] Received response from LLM Client.",
       "[INTENT_EXTRACTION] Successfully extracted intent for product 'System Admin Portal' with roles: ['user', 'admin'].",
       "[SYSTEM_ARCHITECT] Starting system architecture generation...",
       "[SYSTEM_ARCHITECT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'system_architect'...",
-      "[SYSTEM_ARCHITECT] Call finished in 1.02s. Tokens: 366 in / 247 out. Cost: $0.004803",
+      "[SYSTEM_ARCHITECT] Call finished in 1.12s. Tokens: 388 in / 247 out. Cost: $0.004869",
       "[SYSTEM_ARCHITECT] Received response from LLM Client.",
       "[SYSTEM_ARCHITECT] Successfully generated architecture blueprint with 1 DB tables, 1 API endpoints, and 1 UI pages.",
       "[SCHEMA_GENERATION] Starting schema generation...",
       "[SCHEMA_GENERATION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'schema_generation'...",
-      "[SCHEMA_GENERATION] Call finished in 0.97s. Tokens: 569 in / 372 out. Cost: $0.007287",
+      "[SCHEMA_GENERATION] Call finished in 1.00s. Tokens: 569 in / 397 out. Cost: $0.007662",
       "[SCHEMA_GENERATION] Received response from LLM Client.",
       "[SCHEMA_GENERATION] Successfully generated and validated UnifiedAppConfigSchema for 'System Admin Portal'.",
       "[REFINEMENT] Starting refinement and alignment stage...",
       "[REFINEMENT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'refinement'...",
-      "[REFINEMENT] Call finished in 1.23s. Tokens: 828 in / 372 out. Cost: $0.008064",
+      "[REFINEMENT] Call finished in 1.26s. Tokens: 1223 in / 397 out. Cost: $0.009624",
       "[REFINEMENT] Received response from LLM Client.",
       "[REFINEMENT] Successfully refined UnifiedAppConfigSchema for 'System Admin Portal'.",
       "[COMPILER] Configuration compiled successfully on iteration 0!"
@@ -2130,7 +2932,74 @@
         "rules": [],
         "workflows": {}
       },
-      "pricing": null
+      "pricing": null,
+      "intent": {
+        "product_name": "System Admin Portal",
+        "features": [
+          "Manage logs",
+          "User Auth",
+          "Dashboard"
+        ],
+        "user_roles": [
+          "user",
+          "admin"
+        ],
+        "pricing_plans": [
+          {
+            "name": "Free",
+            "price": 0.0,
+            "features": [
+              "Basic usage"
+            ]
+          },
+          {
+            "name": "Premium",
+            "price": 19.99,
+            "features": [
+              "All features"
+            ]
+          }
+        ],
+        "core_operations": [
+          "CRUD logs"
+        ],
+        "entities": [
+          "logs",
+          "users"
+        ],
+        "status": "success",
+        "questions": [],
+        "app_name": "System Admin Portal",
+        "roles": [
+          "user",
+          "admin"
+        ]
+      },
+      "entities": [],
+      "db_schema": {
+        "tables": {
+          "logs": {
+            "columns": {
+              "id": {
+                "type": "INTEGER",
+                "primary_key": true,
+                "foreign_key_to": null,
+                "nullable": false
+              },
+              "event": {
+                "type": "TEXT",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              }
+            },
+            "primary_key": "id",
+            "foreign_keys": null
+          }
+        }
+      },
+      "assumptions": [],
+      "warnings": []
     },
     "id": "admin_forbidden_login",
     "name": "Admin Forbidden Login",
@@ -2140,39 +3009,39 @@
   {
     "success": true,
     "retries": 1,
-    "latency": 6.232,
-    "cost": 0.029223,
-    "input_tokens": 2711,
-    "output_tokens": 1406,
-    "total_tokens": 4117,
+    "latency": 5.652,
+    "cost": 0.03357,
+    "input_tokens": 3670,
+    "output_tokens": 1504,
+    "total_tokens": 5174,
     "calls": 5,
     "errors": [],
     "logs": [
       "[SETUP] Initialized High-Fidelity Mock LLM Engine.",
       "[INTENT_EXTRACTION] Starting intent extraction stage...",
       "[INTENT_EXTRACTION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'intent_extraction'...",
-      "[INTENT_EXTRACTION] Call finished in 1.31s. Tokens: 191 in / 117 out. Cost: $0.002328",
+      "[INTENT_EXTRACTION] Call finished in 1.04s. Tokens: 321 in / 139 out. Cost: $0.003048",
       "[INTENT_EXTRACTION] Received response from LLM Client.",
       "[INTENT_EXTRACTION] Successfully extracted intent for product 'Conflicting Permissions Portal' with roles: ['user', 'admin'].",
       "[SYSTEM_ARCHITECT] Starting system architecture generation...",
       "[SYSTEM_ARCHITECT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'system_architect'...",
-      "[SYSTEM_ARCHITECT] Call finished in 1.22s. Tokens: 371 in / 221 out. Cost: $0.004428",
+      "[SYSTEM_ARCHITECT] Call finished in 0.84s. Tokens: 393 in / 221 out. Cost: $0.004494",
       "[SYSTEM_ARCHITECT] Received response from LLM Client.",
       "[SYSTEM_ARCHITECT] Successfully generated architecture blueprint with 1 DB tables, 1 API endpoints, and 1 UI pages.",
       "[SCHEMA_GENERATION] Starting schema generation...",
       "[SCHEMA_GENERATION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'schema_generation'...",
-      "[SCHEMA_GENERATION] Call finished in 1.28s. Tokens: 544 in / 356 out. Cost: $0.006972",
+      "[SCHEMA_GENERATION] Call finished in 1.38s. Tokens: 544 in / 381 out. Cost: $0.007347",
       "[SCHEMA_GENERATION] Received response from LLM Client.",
       "[SCHEMA_GENERATION] Successfully generated and validated UnifiedAppConfigSchema for 'Conflicting Permissions Portal'.",
       "[REFINEMENT] Starting refinement and alignment stage...",
       "[REFINEMENT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'refinement'...",
-      "[REFINEMENT] Call finished in 1.28s. Tokens: 804 in / 356 out. Cost: $0.007752",
+      "[REFINEMENT] Call finished in 1.16s. Tokens: 1207 in / 381 out. Cost: $0.009336",
       "[REFINEMENT] Received response from LLM Client.",
       "[REFINEMENT] Successfully refined UnifiedAppConfigSchema for 'Conflicting Permissions Portal'.",
       "[COMPILER] Compilation check failed on iteration 0 with 1 errors. Triggering repair...",
       "[REPAIR] Starting repair process for 1 error(s)...",
       "[REPAIR] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'repair'...",
-      "[REPAIR] Call finished in 1.13s. Tokens: 801 in / 356 out. Cost: $0.007743",
+      "[REPAIR] Call finished in 1.23s. Tokens: 1205 in / 382 out. Cost: $0.009345",
       "[REPAIR] Received repaired response from LLM Client.",
       "[REPAIR] Successfully repaired configuration for 'Conflicting Permissions Portal'.",
       "[COMPILER] Configuration compiled successfully on iteration 1!"
@@ -2307,7 +3176,74 @@
         "rules": [],
         "workflows": {}
       },
-      "pricing": null
+      "pricing": null,
+      "intent": {
+        "product_name": "Conflicting Permissions Portal",
+        "features": [
+          "Manage records",
+          "User Auth",
+          "Dashboard"
+        ],
+        "user_roles": [
+          "user",
+          "admin"
+        ],
+        "pricing_plans": [
+          {
+            "name": "Free",
+            "price": 0.0,
+            "features": [
+              "Basic usage"
+            ]
+          },
+          {
+            "name": "Premium",
+            "price": 19.99,
+            "features": [
+              "All features"
+            ]
+          }
+        ],
+        "core_operations": [
+          "CRUD records"
+        ],
+        "entities": [
+          "records",
+          "users"
+        ],
+        "status": "success",
+        "questions": [],
+        "app_name": "Conflicting Permissions Portal",
+        "roles": [
+          "user",
+          "admin"
+        ]
+      },
+      "entities": [],
+      "db_schema": {
+        "tables": {
+          "records": {
+            "columns": {
+              "id": {
+                "type": "INTEGER",
+                "primary_key": true,
+                "foreign_key_to": null,
+                "nullable": false
+              },
+              "data": {
+                "type": "TEXT",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              }
+            },
+            "primary_key": "id",
+            "foreign_keys": null
+          }
+        }
+      },
+      "assumptions": [],
+      "warnings": []
     },
     "id": "conflicting_roles",
     "name": "Conflicting Roles",
@@ -2317,39 +3253,39 @@
   {
     "success": true,
     "retries": 1,
-    "latency": 5.774,
-    "cost": 0.025029,
-    "input_tokens": 2463,
-    "output_tokens": 1176,
-    "total_tokens": 3639,
+    "latency": 5.236,
+    "cost": 0.028815,
+    "input_tokens": 3240,
+    "output_tokens": 1273,
+    "total_tokens": 4513,
     "calls": 5,
     "errors": [],
     "logs": [
       "[SETUP] Initialized High-Fidelity Mock LLM Engine.",
       "[INTENT_EXTRACTION] Starting intent extraction stage...",
       "[INTENT_EXTRACTION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'intent_extraction'...",
-      "[INTENT_EXTRACTION] Call finished in 1.38s. Tokens: 181 in / 72 out. Cost: $0.001623",
+      "[INTENT_EXTRACTION] Call finished in 0.84s. Tokens: 311 in / 94 out. Cost: $0.002343",
       "[INTENT_EXTRACTION] Received response from LLM Client.",
       "[INTENT_EXTRACTION] Successfully extracted intent for product 'Subscription Billing System' with roles: ['user'].",
       "[SYSTEM_ARCHITECT] Starting system architecture generation...",
       "[SYSTEM_ARCHITECT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'system_architect'...",
-      "[SYSTEM_ARCHITECT] Call finished in 1.11s. Tokens: 332 in / 204 out. Cost: $0.004056",
+      "[SYSTEM_ARCHITECT] Call finished in 1.15s. Tokens: 354 in / 204 out. Cost: $0.004122",
       "[SYSTEM_ARCHITECT] Received response from LLM Client.",
       "[SYSTEM_ARCHITECT] Successfully generated architecture blueprint with 1 DB tables, 1 API endpoints, and 1 UI pages.",
       "[SCHEMA_GENERATION] Starting schema generation...",
       "[SCHEMA_GENERATION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'schema_generation'...",
-      "[SCHEMA_GENERATION] Call finished in 1.07s. Tokens: 526 in / 300 out. Cost: $0.006078",
+      "[SCHEMA_GENERATION] Call finished in 1.33s. Tokens: 526 in / 325 out. Cost: $0.006453",
       "[SCHEMA_GENERATION] Received response from LLM Client.",
       "[SCHEMA_GENERATION] Successfully generated and validated UnifiedAppConfigSchema for 'Subscription Billing System'.",
       "[REFINEMENT] Starting refinement and alignment stage...",
       "[REFINEMENT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'refinement'...",
-      "[REFINEMENT] Call finished in 1.13s. Tokens: 722 in / 300 out. Cost: $0.006666",
+      "[REFINEMENT] Call finished in 1.07s. Tokens: 1034 in / 325 out. Cost: $0.007977",
       "[REFINEMENT] Received response from LLM Client.",
       "[REFINEMENT] Successfully refined UnifiedAppConfigSchema for 'Subscription Billing System'.",
       "[COMPILER] Compilation check failed on iteration 0 with 1 errors. Triggering repair...",
       "[REPAIR] Starting repair process for 1 error(s)...",
       "[REPAIR] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'repair'...",
-      "[REPAIR] Call finished in 1.08s. Tokens: 702 in / 300 out. Cost: $0.006606",
+      "[REPAIR] Call finished in 0.84s. Tokens: 1015 in / 325 out. Cost: $0.007920",
       "[REPAIR] Received repaired response from LLM Client.",
       "[REPAIR] Successfully repaired configuration for 'Subscription Billing System'.",
       "[COMPILER] Configuration compiled successfully on iteration 1!"
@@ -2464,7 +3400,62 @@
       },
       "pricing": {
         "monthly_rate": 10.0
-      }
+      },
+      "intent": {
+        "product_name": "Subscription Billing System",
+        "features": [
+          "Manage bills",
+          "User Auth",
+          "Dashboard"
+        ],
+        "user_roles": [
+          "user"
+        ],
+        "pricing_plans": [
+          {
+            "name": "Standard",
+            "price": 10.0
+          }
+        ],
+        "core_operations": [
+          "CRUD bills"
+        ],
+        "entities": [
+          "bills",
+          "users"
+        ],
+        "status": "success",
+        "questions": [],
+        "app_name": "Subscription Billing System",
+        "roles": [
+          "user"
+        ]
+      },
+      "entities": [],
+      "db_schema": {
+        "tables": {
+          "bills": {
+            "columns": {
+              "id": {
+                "type": "INTEGER",
+                "primary_key": true,
+                "foreign_key_to": null,
+                "nullable": false
+              },
+              "amount": {
+                "type": "DECIMAL",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              }
+            },
+            "primary_key": "id",
+            "foreign_keys": null
+          }
+        }
+      },
+      "assumptions": [],
+      "warnings": []
     },
     "id": "negative_pricing",
     "name": "Negative Pricing",
@@ -2474,39 +3465,39 @@
   {
     "success": true,
     "retries": 1,
-    "latency": 6.066,
-    "cost": 0.026157,
-    "input_tokens": 2374,
-    "output_tokens": 1269,
-    "total_tokens": 3643,
+    "latency": 5.917,
+    "cost": 0.029634,
+    "input_tokens": 3028,
+    "output_tokens": 1370,
+    "total_tokens": 4398,
     "calls": 5,
     "errors": [],
     "logs": [
       "[SETUP] Initialized High-Fidelity Mock LLM Engine.",
       "[INTENT_EXTRACTION] Starting intent extraction stage...",
       "[INTENT_EXTRACTION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'intent_extraction'...",
-      "[INTENT_EXTRACTION] Call finished in 1.41s. Tokens: 180 in / 115 out. Cost: $0.002265",
+      "[INTENT_EXTRACTION] Call finished in 0.90s. Tokens: 310 in / 138 out. Cost: $0.003000",
       "[INTENT_EXTRACTION] Received response from LLM Client.",
       "[INTENT_EXTRACTION] Successfully extracted intent for product 'In-Memory Streaming Dashboard' with roles: ['viewer'].",
       "[SYSTEM_ARCHITECT] Starting system architecture generation...",
       "[SYSTEM_ARCHITECT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'system_architect'...",
-      "[SYSTEM_ARCHITECT] Call finished in 1.03s. Tokens: 369 in / 208 out. Cost: $0.004227",
+      "[SYSTEM_ARCHITECT] Call finished in 1.25s. Tokens: 392 in / 208 out. Cost: $0.004296",
       "[SYSTEM_ARCHITECT] Received response from LLM Client.",
       "[SYSTEM_ARCHITECT] Successfully generated architecture blueprint with 1 DB tables, 1 API endpoints, and 1 UI pages.",
       "[SCHEMA_GENERATION] Starting schema generation...",
       "[SCHEMA_GENERATION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'schema_generation'...",
-      "[SCHEMA_GENERATION] Call finished in 1.24s. Tokens: 530 in / 303 out. Cost: $0.006135",
+      "[SCHEMA_GENERATION] Call finished in 1.17s. Tokens: 530 in / 329 out. Cost: $0.006525",
       "[SCHEMA_GENERATION] Received response from LLM Client.",
       "[SCHEMA_GENERATION] Successfully generated and validated UnifiedAppConfigSchema for 'In-Memory Streaming Dashboard'.",
       "[REFINEMENT] Starting refinement and alignment stage...",
       "[REFINEMENT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'refinement'...",
-      "[REFINEMENT] Call finished in 0.96s. Tokens: 653 in / 303 out. Cost: $0.006504",
+      "[REFINEMENT] Call finished in 1.25s. Tokens: 904 in / 329 out. Cost: $0.007647",
       "[REFINEMENT] Received response from LLM Client.",
       "[REFINEMENT] Successfully refined UnifiedAppConfigSchema for 'In-Memory Streaming Dashboard'.",
       "[COMPILER] Compilation check failed on iteration 0 with 1 errors. Triggering repair...",
       "[REPAIR] Starting repair process for 1 error(s)...",
       "[REPAIR] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'repair'...",
-      "[REPAIR] Call finished in 1.41s. Tokens: 642 in / 340 out. Cost: $0.007026",
+      "[REPAIR] Call finished in 1.35s. Tokens: 892 in / 366 out. Cost: $0.008166",
       "[REPAIR] Received repaired response from LLM Client.",
       "[REPAIR] Successfully repaired configuration for 'In-Memory Streaming Dashboard'.",
       "[COMPILER] Configuration compiled successfully on iteration 1!"
@@ -2629,7 +3620,72 @@
         "rules": [],
         "workflows": {}
       },
-      "pricing": null
+      "pricing": null,
+      "intent": {
+        "product_name": "In-Memory Streaming Dashboard",
+        "features": [
+          "Manage telemetry",
+          "User Auth",
+          "Dashboard"
+        ],
+        "user_roles": [
+          "viewer"
+        ],
+        "pricing_plans": [
+          {
+            "name": "Free",
+            "price": 0.0,
+            "features": [
+              "Basic usage"
+            ]
+          },
+          {
+            "name": "Premium",
+            "price": 19.99,
+            "features": [
+              "All features"
+            ]
+          }
+        ],
+        "core_operations": [
+          "CRUD telemetry"
+        ],
+        "entities": [
+          "telemetry",
+          "users"
+        ],
+        "status": "success",
+        "questions": [],
+        "app_name": "In-Memory Streaming Dashboard",
+        "roles": [
+          "viewer"
+        ]
+      },
+      "entities": [],
+      "db_schema": {
+        "tables": {
+          "telemetry": {
+            "columns": {
+              "id": {
+                "type": "INTEGER",
+                "primary_key": true,
+                "foreign_key_to": null,
+                "nullable": false
+              },
+              "value": {
+                "type": "TEXT",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              }
+            },
+            "primary_key": "id",
+            "foreign_keys": null
+          }
+        }
+      },
+      "assumptions": [],
+      "warnings": []
     },
     "id": "no_database",
     "name": "No Database",
@@ -2639,39 +3695,39 @@
   {
     "success": true,
     "retries": 1,
-    "latency": 4.826,
-    "cost": 0.028776,
-    "input_tokens": 2627,
-    "output_tokens": 1393,
-    "total_tokens": 4020,
+    "latency": 5.402,
+    "cost": 0.032832,
+    "input_tokens": 3489,
+    "output_tokens": 1491,
+    "total_tokens": 4980,
     "calls": 5,
     "errors": [],
     "logs": [
       "[SETUP] Initialized High-Fidelity Mock LLM Engine.",
       "[INTENT_EXTRACTION] Starting intent extraction stage...",
       "[INTENT_EXTRACTION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'intent_extraction'...",
-      "[INTENT_EXTRACTION] Call finished in 1.14s. Tokens: 184 in / 111 out. Cost: $0.002217",
+      "[INTENT_EXTRACTION] Call finished in 0.84s. Tokens: 314 in / 133 out. Cost: $0.002937",
       "[INTENT_EXTRACTION] Received response from LLM Client.",
       "[INTENT_EXTRACTION] Successfully extracted intent for product 'Legacy DB Adapter' with roles: ['customer'].",
       "[SYSTEM_ARCHITECT] Starting system architecture generation...",
       "[SYSTEM_ARCHITECT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'system_architect'...",
-      "[SYSTEM_ARCHITECT] Call finished in 0.83s. Tokens: 365 in / 224 out. Cost: $0.004455",
+      "[SYSTEM_ARCHITECT] Call finished in 0.97s. Tokens: 387 in / 224 out. Cost: $0.004521",
       "[SYSTEM_ARCHITECT] Received response from LLM Client.",
       "[SYSTEM_ARCHITECT] Successfully generated architecture blueprint with 1 DB tables, 1 API endpoints, and 1 UI pages.",
       "[SCHEMA_GENERATION] Starting schema generation...",
       "[SCHEMA_GENERATION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'schema_generation'...",
-      "[SCHEMA_GENERATION] Call finished in 0.88s. Tokens: 547 in / 353 out. Cost: $0.006936",
+      "[SCHEMA_GENERATION] Call finished in 1.32s. Tokens: 547 in / 378 out. Cost: $0.007311",
       "[SCHEMA_GENERATION] Received response from LLM Client.",
       "[SCHEMA_GENERATION] Successfully generated and validated UnifiedAppConfigSchema for 'Legacy DB Adapter'.",
       "[REFINEMENT] Starting refinement and alignment stage...",
       "[REFINEMENT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'refinement'...",
-      "[REFINEMENT] Call finished in 0.98s. Tokens: 772 in / 353 out. Cost: $0.007611",
+      "[REFINEMENT] Call finished in 1.25s. Tokens: 1127 in / 378 out. Cost: $0.009051",
       "[REFINEMENT] Received response from LLM Client.",
       "[REFINEMENT] Successfully refined UnifiedAppConfigSchema for 'Legacy DB Adapter'.",
       "[COMPILER] Compilation check failed on iteration 0 with 1 errors. Triggering repair...",
       "[REPAIR] Starting repair process for 1 error(s)...",
       "[REPAIR] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'repair'...",
-      "[REPAIR] Call finished in 0.99s. Tokens: 759 in / 352 out. Cost: $0.007557",
+      "[REPAIR] Call finished in 1.01s. Tokens: 1114 in / 378 out. Cost: $0.009012",
       "[REPAIR] Received repaired response from LLM Client.",
       "[REPAIR] Successfully repaired configuration for 'Legacy DB Adapter'.",
       "[COMPILER] Configuration compiled successfully on iteration 1!"
@@ -2797,7 +3853,72 @@
         "rules": [],
         "workflows": {}
       },
-      "pricing": null
+      "pricing": null,
+      "intent": {
+        "product_name": "Legacy DB Adapter",
+        "features": [
+          "Manage orders",
+          "User Auth",
+          "Dashboard"
+        ],
+        "user_roles": [
+          "customer"
+        ],
+        "pricing_plans": [
+          {
+            "name": "Free",
+            "price": 0.0,
+            "features": [
+              "Basic usage"
+            ]
+          },
+          {
+            "name": "Premium",
+            "price": 19.99,
+            "features": [
+              "All features"
+            ]
+          }
+        ],
+        "core_operations": [
+          "CRUD orders"
+        ],
+        "entities": [
+          "orders",
+          "users"
+        ],
+        "status": "success",
+        "questions": [],
+        "app_name": "Legacy DB Adapter",
+        "roles": [
+          "customer"
+        ]
+      },
+      "entities": [],
+      "db_schema": {
+        "tables": {
+          "orders": {
+            "columns": {
+              "id": {
+                "type": "INTEGER",
+                "primary_key": true,
+                "foreign_key_to": null,
+                "nullable": false
+              },
+              "status": {
+                "type": "TEXT",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              }
+            },
+            "primary_key": "id",
+            "foreign_keys": null
+          }
+        }
+      },
+      "assumptions": [],
+      "warnings": []
     },
     "id": "api_referencing_missing_db",
     "name": "API Referencing Missing DB Table",
@@ -2807,33 +3928,33 @@
   {
     "success": true,
     "retries": 0,
-    "latency": 4.157,
-    "cost": 0.021273,
-    "input_tokens": 1886,
-    "output_tokens": 1041,
-    "total_tokens": 2927,
+    "latency": 4.26,
+    "cost": 0.023874,
+    "input_tokens": 2393,
+    "output_tokens": 1113,
+    "total_tokens": 3506,
     "calls": 4,
     "errors": [],
     "logs": [
       "[SETUP] Initialized High-Fidelity Mock LLM Engine.",
       "[INTENT_EXTRACTION] Starting intent extraction stage...",
       "[INTENT_EXTRACTION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'intent_extraction'...",
-      "[INTENT_EXTRACTION] Call finished in 1.27s. Tokens: 186 in / 111 out. Cost: $0.002223",
+      "[INTENT_EXTRACTION] Call finished in 1.07s. Tokens: 316 in / 133 out. Cost: $0.002943",
       "[INTENT_EXTRACTION] Received response from LLM Client.",
       "[INTENT_EXTRACTION] Successfully extracted intent for product 'User Registration System' with roles: ['guest'].",
       "[SYSTEM_ARCHITECT] Starting system architecture generation...",
       "[SYSTEM_ARCHITECT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'system_architect'...",
-      "[SYSTEM_ARCHITECT] Call finished in 0.87s. Tokens: 365 in / 224 out. Cost: $0.004455",
+      "[SYSTEM_ARCHITECT] Call finished in 0.87s. Tokens: 387 in / 224 out. Cost: $0.004521",
       "[SYSTEM_ARCHITECT] Received response from LLM Client.",
       "[SYSTEM_ARCHITECT] Successfully generated architecture blueprint with 1 DB tables, 1 API endpoints, and 1 UI pages.",
       "[SCHEMA_GENERATION] Starting schema generation...",
       "[SCHEMA_GENERATION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'schema_generation'...",
-      "[SCHEMA_GENERATION] Call finished in 1.05s. Tokens: 546 in / 353 out. Cost: $0.006933",
+      "[SCHEMA_GENERATION] Call finished in 1.00s. Tokens: 546 in / 378 out. Cost: $0.007308",
       "[SCHEMA_GENERATION] Received response from LLM Client.",
       "[SCHEMA_GENERATION] Successfully generated and validated UnifiedAppConfigSchema for 'User Registration System'.",
       "[REFINEMENT] Starting refinement and alignment stage...",
       "[REFINEMENT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'refinement'...",
-      "[REFINEMENT] Call finished in 0.96s. Tokens: 789 in / 353 out. Cost: $0.007662",
+      "[REFINEMENT] Call finished in 1.31s. Tokens: 1144 in / 378 out. Cost: $0.009102",
       "[REFINEMENT] Received response from LLM Client.",
       "[REFINEMENT] Successfully refined UnifiedAppConfigSchema for 'User Registration System'.",
       "[COMPILER] Configuration compiled successfully on iteration 0!"
@@ -2961,7 +4082,72 @@
         "rules": [],
         "workflows": {}
       },
-      "pricing": null
+      "pricing": null,
+      "intent": {
+        "product_name": "User Registration System",
+        "features": [
+          "Manage users",
+          "User Auth",
+          "Dashboard"
+        ],
+        "user_roles": [
+          "guest"
+        ],
+        "pricing_plans": [
+          {
+            "name": "Free",
+            "price": 0.0,
+            "features": [
+              "Basic usage"
+            ]
+          },
+          {
+            "name": "Premium",
+            "price": 19.99,
+            "features": [
+              "All features"
+            ]
+          }
+        ],
+        "core_operations": [
+          "CRUD users"
+        ],
+        "entities": [
+          "users",
+          "items"
+        ],
+        "status": "success",
+        "questions": [],
+        "app_name": "User Registration System",
+        "roles": [
+          "guest"
+        ]
+      },
+      "entities": [],
+      "db_schema": {
+        "tables": {
+          "users": {
+            "columns": {
+              "id": {
+                "type": "INTEGER",
+                "primary_key": true,
+                "foreign_key_to": null,
+                "nullable": false
+              },
+              "email": {
+                "type": "TEXT",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              }
+            },
+            "primary_key": "id",
+            "foreign_keys": null
+          }
+        }
+      },
+      "assumptions": [],
+      "warnings": []
     },
     "id": "incorrect_data_type",
     "name": "Incorrect Data Type Mismatch",
@@ -2971,39 +4157,39 @@
   {
     "success": true,
     "retries": 1,
-    "latency": 4.879,
-    "cost": 0.020121,
-    "input_tokens": 1782,
-    "output_tokens": 985,
-    "total_tokens": 2767,
+    "latency": 5.538,
+    "cost": 0.023316,
+    "input_tokens": 2347,
+    "output_tokens": 1085,
+    "total_tokens": 3432,
     "calls": 5,
     "errors": [],
     "logs": [
       "[SETUP] Initialized High-Fidelity Mock LLM Engine.",
       "[INTENT_EXTRACTION] Starting intent extraction stage...",
       "[INTENT_EXTRACTION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'intent_extraction'...",
-      "[INTENT_EXTRACTION] Call finished in 1.17s. Tokens: 180 in / 112 out. Cost: $0.002220",
+      "[INTENT_EXTRACTION] Call finished in 0.85s. Tokens: 310 in / 134 out. Cost: $0.002940",
       "[INTENT_EXTRACTION] Received response from LLM Client.",
       "[INTENT_EXTRACTION] Successfully extracted intent for product 'No-Op Daemon Application' with roles: ['guest'].",
       "[SYSTEM_ARCHITECT] Starting system architecture generation...",
       "[SYSTEM_ARCHITECT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'system_architect'...",
-      "[SYSTEM_ARCHITECT] Call finished in 0.90s. Tokens: 366 in / 202 out. Cost: $0.004128",
+      "[SYSTEM_ARCHITECT] Call finished in 1.31s. Tokens: 388 in / 202 out. Cost: $0.004194",
       "[SYSTEM_ARCHITECT] Received response from LLM Client.",
       "[SYSTEM_ARCHITECT] Successfully generated architecture blueprint with 1 DB tables, 1 API endpoints, and 1 UI pages.",
       "[SCHEMA_GENERATION] Starting schema generation...",
       "[SCHEMA_GENERATION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'schema_generation'...",
-      "[SCHEMA_GENERATION] Call finished in 0.82s. Tokens: 525 in / 170 out. Cost: $0.004125",
+      "[SCHEMA_GENERATION] Call finished in 1.23s. Tokens: 525 in / 196 out. Cost: $0.004515",
       "[SCHEMA_GENERATION] Received response from LLM Client.",
       "[SCHEMA_GENERATION] Successfully generated and validated UnifiedAppConfigSchema for 'No-Op Daemon Application'.",
       "[REFINEMENT] Starting refinement and alignment stage...",
       "[REFINEMENT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'refinement'...",
-      "[REFINEMENT] Call finished in 1.06s. Tokens: 362 in / 170 out. Cost: $0.003636",
+      "[REFINEMENT] Call finished in 0.96s. Tokens: 568 in / 196 out. Cost: $0.004644",
       "[REFINEMENT] Received response from LLM Client.",
       "[REFINEMENT] Successfully refined UnifiedAppConfigSchema for 'No-Op Daemon Application'.",
       "[COMPILER] Compilation check failed on iteration 0 with 1 errors. Triggering repair...",
       "[REPAIR] Starting repair process for 1 error(s)...",
       "[REPAIR] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'repair'...",
-      "[REPAIR] Call finished in 0.92s. Tokens: 349 in / 331 out. Cost: $0.006012",
+      "[REPAIR] Call finished in 1.18s. Tokens: 556 in / 357 out. Cost: $0.007023",
       "[REPAIR] Received repaired response from LLM Client.",
       "[REPAIR] Successfully repaired configuration for 'No-Op Daemon Application'.",
       "[COMPILER] Configuration compiled successfully on iteration 1!"
@@ -3126,7 +4312,72 @@
         "rules": [],
         "workflows": {}
       },
-      "pricing": null
+      "pricing": null,
+      "intent": {
+        "product_name": "No-Op Daemon Application",
+        "features": [
+          "Manage status",
+          "User Auth",
+          "Dashboard"
+        ],
+        "user_roles": [
+          "guest"
+        ],
+        "pricing_plans": [
+          {
+            "name": "Free",
+            "price": 0.0,
+            "features": [
+              "Basic usage"
+            ]
+          },
+          {
+            "name": "Premium",
+            "price": 19.99,
+            "features": [
+              "All features"
+            ]
+          }
+        ],
+        "core_operations": [
+          "CRUD status"
+        ],
+        "entities": [
+          "status",
+          "users"
+        ],
+        "status": "success",
+        "questions": [],
+        "app_name": "No-Op Daemon Application",
+        "roles": [
+          "guest"
+        ]
+      },
+      "entities": [],
+      "db_schema": {
+        "tables": {
+          "status": {
+            "columns": {
+              "id": {
+                "type": "INTEGER",
+                "primary_key": true,
+                "foreign_key_to": null,
+                "nullable": false
+              },
+              "msg": {
+                "type": "TEXT",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              }
+            },
+            "primary_key": "id",
+            "foreign_keys": null
+          }
+        }
+      },
+      "assumptions": [],
+      "warnings": []
     },
     "id": "empty_intent",
     "name": "Empty Intent / No-Op Daemon",
@@ -3136,39 +4387,39 @@
   {
     "success": true,
     "retries": 1,
-    "latency": 5.715,
-    "cost": 0.048147,
-    "input_tokens": 4089,
-    "output_tokens": 2392,
-    "total_tokens": 6481,
+    "latency": 6.197,
+    "cost": 0.054651,
+    "input_tokens": 5767,
+    "output_tokens": 2490,
+    "total_tokens": 8257,
     "calls": 5,
     "errors": [],
     "logs": [
       "[SETUP] Initialized High-Fidelity Mock LLM Engine.",
       "[INTENT_EXTRACTION] Starting intent extraction stage...",
       "[INTENT_EXTRACTION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'intent_extraction'...",
-      "[INTENT_EXTRACTION] Call finished in 1.19s. Tokens: 180 in / 113 out. Cost: $0.002235",
+      "[INTENT_EXTRACTION] Call finished in 1.27s. Tokens: 310 in / 135 out. Cost: $0.002955",
       "[INTENT_EXTRACTION] Received response from LLM Client.",
       "[INTENT_EXTRACTION] Successfully extracted intent for product 'Enterprise Multi-tenant Platform' with roles: ['operator'].",
       "[SYSTEM_ARCHITECT] Starting system architecture generation...",
       "[SYSTEM_ARCHITECT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'system_architect'...",
-      "[SYSTEM_ARCHITECT] Call finished in 0.92s. Tokens: 367 in / 207 out. Cost: $0.004206",
+      "[SYSTEM_ARCHITECT] Call finished in 1.03s. Tokens: 389 in / 207 out. Cost: $0.004272",
       "[SYSTEM_ARCHITECT] Received response from LLM Client.",
       "[SYSTEM_ARCHITECT] Successfully generated architecture blueprint with 1 DB tables, 1 API endpoints, and 1 UI pages.",
       "[SCHEMA_GENERATION] Starting schema generation...",
       "[SCHEMA_GENERATION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'schema_generation'...",
-      "[SCHEMA_GENERATION] Call finished in 1.15s. Tokens: 529 in / 694 out. Cost: $0.011997",
+      "[SCHEMA_GENERATION] Call finished in 1.25s. Tokens: 529 in / 719 out. Cost: $0.012372",
       "[SCHEMA_GENERATION] Received response from LLM Client.",
       "[SCHEMA_GENERATION] Successfully generated and validated UnifiedAppConfigSchema for 'Customer Relationship Manager'.",
       "[REFINEMENT] Starting refinement and alignment stage...",
       "[REFINEMENT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'refinement'...",
-      "[REFINEMENT] Call finished in 1.36s. Tokens: 1515 in / 694 out. Cost: $0.014955",
+      "[REFINEMENT] Call finished in 1.22s. Tokens: 2278 in / 719 out. Cost: $0.017619",
       "[REFINEMENT] Received response from LLM Client.",
       "[REFINEMENT] Successfully refined UnifiedAppConfigSchema for 'Customer Relationship Manager'.",
       "[COMPILER] Compilation check failed on iteration 0 with 1 errors. Triggering repair...",
       "[REPAIR] Starting repair process for 1 error(s)...",
       "[REPAIR] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'repair'...",
-      "[REPAIR] Call finished in 1.08s. Tokens: 1498 in / 684 out. Cost: $0.014754",
+      "[REPAIR] Call finished in 1.40s. Tokens: 2261 in / 710 out. Cost: $0.017433",
       "[REPAIR] Received repaired response from LLM Client.",
       "[REPAIR] Successfully repaired configuration for 'Customer Relationship Manager'.",
       "[COMPILER] Configuration compiled successfully on iteration 1!"
@@ -3417,7 +4668,125 @@
         "rules": [],
         "workflows": {}
       },
-      "pricing": null
+      "pricing": null,
+      "intent": {
+        "product_name": "Customer Relationship Manager",
+        "features": [
+          "Manage users",
+          "Manage contacts",
+          "User Auth",
+          "Dashboard"
+        ],
+        "user_roles": [
+          "sales_rep",
+          "manager",
+          "admin"
+        ],
+        "pricing_plans": [
+          {
+            "name": "Free",
+            "price": 0.0,
+            "features": [
+              "Basic usage"
+            ]
+          },
+          {
+            "name": "Premium",
+            "price": 19.99,
+            "features": [
+              "All features"
+            ]
+          }
+        ],
+        "core_operations": [
+          "CRUD users",
+          "CRUD contacts"
+        ],
+        "entities": [
+          "users",
+          "contacts"
+        ],
+        "status": "success",
+        "questions": [],
+        "app_name": "Customer Relationship Manager",
+        "roles": [
+          "sales_rep",
+          "manager",
+          "admin"
+        ]
+      },
+      "entities": [],
+      "db_schema": {
+        "tables": {
+          "users": {
+            "columns": {
+              "id": {
+                "type": "INTEGER",
+                "primary_key": true,
+                "foreign_key_to": null,
+                "nullable": false
+              },
+              "name": {
+                "type": "TEXT",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              },
+              "email": {
+                "type": "TEXT",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              },
+              "role": {
+                "type": "TEXT",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              }
+            },
+            "primary_key": "id",
+            "foreign_keys": null
+          },
+          "contacts": {
+            "columns": {
+              "id": {
+                "type": "INTEGER",
+                "primary_key": true,
+                "foreign_key_to": null,
+                "nullable": false
+              },
+              "name": {
+                "type": "TEXT",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              },
+              "email": {
+                "type": "TEXT",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              },
+              "owner_id": {
+                "type": "INTEGER",
+                "primary_key": false,
+                "foreign_key_to": "users.id",
+                "nullable": true
+              }
+            },
+            "primary_key": "id",
+            "foreign_keys": [
+              {
+                "column": "owner_id",
+                "references": "users.id"
+              }
+            ]
+          }
+        }
+      },
+      "assumptions": [],
+      "warnings": []
     },
     "id": "massive_scale",
     "name": "Massive Scale Pages",
@@ -3427,39 +4796,39 @@
   {
     "success": true,
     "retries": 1,
-    "latency": 5.723,
-    "cost": 0.033423,
-    "input_tokens": 2881,
-    "output_tokens": 1652,
-    "total_tokens": 4533,
+    "latency": 4.666,
+    "cost": 0.037917,
+    "input_tokens": 3854,
+    "output_tokens": 1757,
+    "total_tokens": 5611,
     "calls": 5,
     "errors": [],
     "logs": [
       "[SETUP] Initialized High-Fidelity Mock LLM Engine.",
       "[INTENT_EXTRACTION] Starting intent extraction stage...",
       "[INTENT_EXTRACTION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'intent_extraction'...",
-      "[INTENT_EXTRACTION] Call finished in 1.00s. Tokens: 178 in / 119 out. Cost: $0.002319",
+      "[INTENT_EXTRACTION] Call finished in 0.90s. Tokens: 308 in / 143 out. Cost: $0.003069",
       "[INTENT_EXTRACTION] Received response from LLM Client.",
       "[INTENT_EXTRACTION] Successfully extracted intent for product 'E-Commerce Checkout Pipeline' with roles: ['buyer', 'guest'].",
       "[SYSTEM_ARCHITECT] Starting system architecture generation...",
       "[SYSTEM_ARCHITECT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'system_architect'...",
-      "[SYSTEM_ARCHITECT] Call finished in 0.99s. Tokens: 373 in / 275 out. Cost: $0.005244",
+      "[SYSTEM_ARCHITECT] Call finished in 0.83s. Tokens: 397 in / 275 out. Cost: $0.005316",
       "[SYSTEM_ARCHITECT] Received response from LLM Client.",
       "[SYSTEM_ARCHITECT] Successfully generated architecture blueprint with 1 DB tables, 1 API endpoints, and 2 UI pages.",
       "[SCHEMA_GENERATION] Starting schema generation...",
       "[SCHEMA_GENERATION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'schema_generation'...",
-      "[SCHEMA_GENERATION] Call finished in 1.17s. Tokens: 597 in / 423 out. Cost: $0.008136",
+      "[SCHEMA_GENERATION] Call finished in 0.83s. Tokens: 597 in / 450 out. Cost: $0.008541",
       "[SCHEMA_GENERATION] Received response from LLM Client.",
       "[SCHEMA_GENERATION] Successfully generated and validated UnifiedAppConfigSchema for 'E-Commerce Checkout Pipeline'.",
       "[REFINEMENT] Starting refinement and alignment stage...",
       "[REFINEMENT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'refinement'...",
-      "[REFINEMENT] Call finished in 1.17s. Tokens: 875 in / 423 out. Cost: $0.008970",
+      "[REFINEMENT] Call finished in 0.98s. Tokens: 1284 in / 450 out. Cost: $0.010602",
       "[REFINEMENT] Received response from LLM Client.",
       "[REFINEMENT] Successfully refined UnifiedAppConfigSchema for 'E-Commerce Checkout Pipeline'.",
       "[COMPILER] Compilation check failed on iteration 0 with 1 errors. Triggering repair...",
       "[REPAIR] Starting repair process for 1 error(s)...",
       "[REPAIR] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'repair'...",
-      "[REPAIR] Call finished in 1.38s. Tokens: 858 in / 412 out. Cost: $0.008754",
+      "[REPAIR] Call finished in 1.11s. Tokens: 1268 in / 439 out. Cost: $0.010389",
       "[REPAIR] Received repaired response from LLM Client.",
       "[REPAIR] Successfully repaired configuration for 'E-Commerce Checkout Pipeline'.",
       "[COMPILER] Configuration compiled successfully on iteration 1!"
@@ -3607,7 +4976,74 @@
         "rules": [],
         "workflows": {}
       },
-      "pricing": null
+      "pricing": null,
+      "intent": {
+        "product_name": "E-Commerce Checkout Pipeline",
+        "features": [
+          "Manage transactions",
+          "User Auth",
+          "Dashboard"
+        ],
+        "user_roles": [
+          "buyer",
+          "guest"
+        ],
+        "pricing_plans": [
+          {
+            "name": "Free",
+            "price": 0.0,
+            "features": [
+              "Basic usage"
+            ]
+          },
+          {
+            "name": "Premium",
+            "price": 19.99,
+            "features": [
+              "All features"
+            ]
+          }
+        ],
+        "core_operations": [
+          "CRUD transactions"
+        ],
+        "entities": [
+          "transactions",
+          "users"
+        ],
+        "status": "success",
+        "questions": [],
+        "app_name": "E-Commerce Checkout Pipeline",
+        "roles": [
+          "buyer",
+          "guest"
+        ]
+      },
+      "entities": [],
+      "db_schema": {
+        "tables": {
+          "transactions": {
+            "columns": {
+              "id": {
+                "type": "INTEGER",
+                "primary_key": true,
+                "foreign_key_to": null,
+                "nullable": false
+              },
+              "total": {
+                "type": "DECIMAL",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              }
+            },
+            "primary_key": "id",
+            "foreign_keys": null
+          }
+        }
+      },
+      "assumptions": [],
+      "warnings": []
     },
     "id": "ambiguous_flow",
     "name": "Ambiguous Flow / Circular Routing",
@@ -3617,39 +5053,39 @@
   {
     "success": true,
     "retries": 1,
-    "latency": 4.912,
-    "cost": 0.030138,
-    "input_tokens": 2746,
-    "output_tokens": 1460,
-    "total_tokens": 4206,
+    "latency": 5.162,
+    "cost": 0.034488,
+    "input_tokens": 3706,
+    "output_tokens": 1558,
+    "total_tokens": 5264,
     "calls": 5,
     "errors": [],
     "logs": [
       "[SETUP] Initialized High-Fidelity Mock LLM Engine.",
       "[INTENT_EXTRACTION] Starting intent extraction stage...",
       "[INTENT_EXTRACTION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'intent_extraction'...",
-      "[INTENT_EXTRACTION] Call finished in 0.84s. Tokens: 181 in / 116 out. Cost: $0.002283",
+      "[INTENT_EXTRACTION] Call finished in 0.99s. Tokens: 311 in / 138 out. Cost: $0.003003",
       "[INTENT_EXTRACTION] Received response from LLM Client.",
       "[INTENT_EXTRACTION] Successfully extracted intent for product 'Premium News Publisher' with roles: ['free', 'premium'].",
       "[SYSTEM_ARCHITECT] Starting system architecture generation...",
       "[SYSTEM_ARCHITECT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'system_architect'...",
-      "[SYSTEM_ARCHITECT] Call finished in 1.01s. Tokens: 370 in / 233 out. Cost: $0.004605",
+      "[SYSTEM_ARCHITECT] Call finished in 1.07s. Tokens: 392 in / 233 out. Cost: $0.004671",
       "[SYSTEM_ARCHITECT] Received response from LLM Client.",
       "[SYSTEM_ARCHITECT] Successfully generated architecture blueprint with 1 DB tables, 1 API endpoints, and 1 UI pages.",
       "[SCHEMA_GENERATION] Starting schema generation...",
       "[SCHEMA_GENERATION] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'schema_generation'...",
-      "[SCHEMA_GENERATION] Call finished in 1.20s. Tokens: 556 in / 372 out. Cost: $0.007248",
+      "[SCHEMA_GENERATION] Call finished in 1.21s. Tokens: 556 in / 397 out. Cost: $0.007623",
       "[SCHEMA_GENERATION] Received response from LLM Client.",
       "[SCHEMA_GENERATION] Successfully generated and validated UnifiedAppConfigSchema for 'Premium News Publisher'.",
       "[REFINEMENT] Starting refinement and alignment stage...",
       "[REFINEMENT] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'refinement'...",
-      "[REFINEMENT] Call finished in 0.83s. Tokens: 818 in / 372 out. Cost: $0.008034",
+      "[REFINEMENT] Call finished in 0.84s. Tokens: 1222 in / 397 out. Cost: $0.009621",
       "[REFINEMENT] Received response from LLM Client.",
       "[REFINEMENT] Successfully refined UnifiedAppConfigSchema for 'Premium News Publisher'.",
       "[COMPILER] Compilation check failed on iteration 0 with 1 errors. Triggering repair...",
       "[REPAIR] Starting repair process for 1 error(s)...",
       "[REPAIR] Invoking model 'claude-3-5-sonnet-20241022' (mock=True) for stage 'repair'...",
-      "[REPAIR] Call finished in 1.03s. Tokens: 821 in / 367 out. Cost: $0.007968",
+      "[REPAIR] Call finished in 1.06s. Tokens: 1225 in / 393 out. Cost: $0.009570",
       "[REPAIR] Received repaired response from LLM Client.",
       "[REPAIR] Successfully repaired configuration for 'Premium News Publisher'.",
       "[COMPILER] Configuration compiled successfully on iteration 1!"
@@ -3783,7 +5219,74 @@
         "rules": [],
         "workflows": {}
       },
-      "pricing": null
+      "pricing": null,
+      "intent": {
+        "product_name": "Premium News Publisher",
+        "features": [
+          "Manage articles",
+          "User Auth",
+          "Dashboard"
+        ],
+        "user_roles": [
+          "free",
+          "premium"
+        ],
+        "pricing_plans": [
+          {
+            "name": "Free",
+            "price": 0.0,
+            "features": [
+              "Basic usage"
+            ]
+          },
+          {
+            "name": "Premium",
+            "price": 19.99,
+            "features": [
+              "All features"
+            ]
+          }
+        ],
+        "core_operations": [
+          "CRUD articles"
+        ],
+        "entities": [
+          "articles",
+          "users"
+        ],
+        "status": "success",
+        "questions": [],
+        "app_name": "Premium News Publisher",
+        "roles": [
+          "free",
+          "premium"
+        ]
+      },
+      "entities": [],
+      "db_schema": {
+        "tables": {
+          "articles": {
+            "columns": {
+              "id": {
+                "type": "INTEGER",
+                "primary_key": true,
+                "foreign_key_to": null,
+                "nullable": false
+              },
+              "premium": {
+                "type": "BOOLEAN",
+                "primary_key": false,
+                "foreign_key_to": null,
+                "nullable": true
+              }
+            },
+            "primary_key": "id",
+            "foreign_keys": null
+          }
+        }
+      },
+      "assumptions": [],
+      "warnings": []
     },
     "id": "gated_read",
     "name": "Gated Read / Free Users Access Premium",

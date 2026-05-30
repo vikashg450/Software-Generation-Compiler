@@ -115,40 +115,41 @@ st.sidebar.markdown('<p class="sidebar-title">⚙️ Compiler Settings</p>', uns
 
 model_choice = st.sidebar.selectbox(
     "Select LLM Model",
-    options=["Gemini 2.5 Flash", "Gemini 2.5 Pro"],
+    options=["Claude 3.5 Sonnet", "Claude 3.5 Haiku"],
     index=0,
     help="Model tier for the compiler agents pipeline."
 )
 
-internal_model = "gemini-2.5-flash" if model_choice == "Gemini 2.5 Flash" else "gemini-2.5-pro"
+internal_model = "claude-3-5-sonnet-20241022" if model_choice == "Claude 3.5 Sonnet" else "claude-3-5-haiku-20241022"
 
 # API Key input
 api_key_input = st.sidebar.text_input(
-    "Gemini API Key (Optional)",
+    "Claude API Key (Optional)",
     type="password",
-    value=os.environ.get("GEMINI_API_KEY", ""),
-    help="Provide your Google Gemini API key to run real calls. If empty, the mock compiler is forced."
+    value=os.environ.get("ANTHROPIC_API_KEY", ""),
+    help="Provide your Anthropic or OpenRouter API key. If empty, the mock compiler is forced."
 )
 
 if api_key_input:
-    os.environ["GEMINI_API_KEY"] = api_key_input
+    os.environ["ANTHROPIC_API_KEY"] = api_key_input
 
 # Check API key availability
-api_key_available = bool(os.environ.get("GEMINI_API_KEY"))
+api_key_available = bool(os.environ.get("ANTHROPIC_API_KEY"))
 
 # Toggle Execution Mode
 if api_key_available:
     execution_mode = st.sidebar.radio(
         "Execution Mode",
         options=["Run Real LLM Calls", "Run High-Fidelity Mock Compiler"],
-        index=1,
-        help="Select whether to use the real Gemini models via Google GenAI SDK or the local High-Fidelity Mock."
+        index=0 if os.environ.get("MOCK_LLM", "false").lower() == "false" else 1,
+        help="Select whether to use real Claude models or the local High-Fidelity Mock."
     )
 else:
-    st.sidebar.warning("⚠️ No GEMINI_API_KEY detected. Running in High-Fidelity Mock Compiler mode.")
+    st.sidebar.warning("⚠️ No ANTHROPIC_API_KEY detected. Running in High-Fidelity Mock Compiler mode.")
     execution_mode = "Run High-Fidelity Mock Compiler"
 
 mock_mode = (execution_mode == "Run High-Fidelity Mock Compiler")
+os.environ["MOCK_LLM"] = "true" if mock_mode else "false"
 
 st.sidebar.markdown("---")
 st.sidebar.write("⚡ **Software Generation Compiler**")
@@ -192,6 +193,31 @@ with tab1:
         st.session_state.workspace_prompt = name_to_case[selected_option]["prompt"]
         st.session_state.last_selected_option = selected_option
 
+    # Check for clarification state (Step 6)
+    if st.session_state.get("clarification_questions"):
+        st.warning("🔍 **Clarification Request**: The prompt is too vague or incomplete. Please answer these questions to proceed:")
+        
+        with st.form("clarification_form"):
+            user_answers = []
+            for i, q in enumerate(st.session_state.clarification_questions):
+                ans = st.text_input(q, key=f"q_{i}")
+                user_answers.append(ans)
+            
+            submit_clarifications = st.form_submit_button("Submit Answers & Re-compile")
+            
+            if submit_clarifications:
+                # Enrich prompt
+                enriched_prompt = st.session_state.clarification_prompt + "\n\n### User Clarifications:\n"
+                for q, ans in zip(st.session_state.clarification_questions, user_answers):
+                    enriched_prompt += f"- Q: {q}\n  A: {ans or 'Yes'}\n"
+                
+                st.session_state.workspace_prompt = enriched_prompt
+                # Clear clarification state
+                st.session_state.clarification_questions = []
+                st.session_state.clarification_prompt = ""
+                st.session_state.run_compiler = True
+                st.rerun()
+
     prompt_input = st.text_area(
         "Describe your software application requirements (in plain English):",
         value=st.session_state.workspace_prompt,
@@ -201,7 +227,9 @@ with tab1:
 
     run_compilation = st.button("🚀 Run Compiler Pipeline", type="primary")
 
-    if run_compilation:
+    # Support automated re-runs on submitting clarifications
+    if run_compilation or st.session_state.get("run_compiler", False):
+        st.session_state.run_compiler = False
         context = ExecutionContext()
         client = LLMClient(context=context, mock=mock_mode, model=internal_model)
         
@@ -219,6 +247,15 @@ with tab1:
             with st.spinner("Extracting application intent..."):
                 intent = extractor.extract_intent(prompt_input)
             
+            # Step 6: Clarification check
+            if intent.status == "needs_clarification":
+                st.session_state.clarification_questions = intent.questions
+                st.session_state.clarification_prompt = prompt_input
+                progress_bar.progress(100, text="Needs Clarification!")
+                st.error("⚠️ Prompt lacks sufficient detail. Clarification form is loaded below.")
+                time.sleep(1.0)
+                st.rerun()
+
             with st.expander("🔍 Stage 1: Intent Extraction (Structured JSON Output)", expanded=True):
                 st.json(intent.model_dump())
                 
@@ -290,6 +327,10 @@ with tab1:
                     
             progress_bar.progress(100, text="Compilation workflow complete!")
             
+            # Show final latency and metrics (Step 9)
+            run_metrics = context.cost_analyzer.get_metrics()
+            st.info(f"⏱️ **Performance Metrics**: Latency: **{context.logs[-1]['timestamp'] - context.logs[0]['timestamp']:.2f} seconds** | repairs: **{len(repair_logs)}** | Total Cost: **${run_metrics.total_cost_usd:.5f}**")
+
             # --- Render Validation & Repair Engine Status Block ---
             st.markdown("### 🛠️ Validation & Repair Engine Status")
             
@@ -346,6 +387,7 @@ with tab1:
         except Exception as ex:
             st.error(f"❌ An error occurred during the compilation run: {ex}")
             st.exception(ex)
+
 
 # ----------------------------------------------------
 # Tab 2: Automated Evaluator Dashboard
@@ -558,40 +600,40 @@ with tab3:
     # Repairs: repairs * 800
     total_output_tokens = 2200 + (repairs * 800)
 
-    # Token Prices
-    flash_input_price = 0.075 / 1_000_000
-    flash_output_price = 0.30 / 1_000_000
-    flash_quality = 0.75
-    flash_avg_latency_per_call = 0.35  # seconds
+    # Token Prices (Claude 3.5 Sonnet vs Claude 3.5 Haiku)
+    haiku_input_price = 0.80 / 1_000_000
+    haiku_output_price = 4.00 / 1_000_000
+    haiku_quality = 0.85
+    haiku_avg_latency_per_call = 0.40  # seconds
 
-    pro_input_price = 1.25 / 1_000_000
-    pro_output_price = 5.00 / 1_000_000
-    pro_quality = 0.95
-    pro_avg_latency_per_call = 1.10  # seconds
+    sonnet_input_price = 3.00 / 1_000_000
+    sonnet_output_price = 15.00 / 1_000_000
+    sonnet_quality = 0.98
+    sonnet_avg_latency_per_call = 1.20  # seconds
 
     # Single compiler costs
-    flash_compile_cost = (total_input_tokens * flash_input_price) + (total_output_tokens * flash_output_price)
-    pro_compile_cost = (total_input_tokens * pro_input_price) + (total_output_tokens * pro_output_price)
+    haiku_compile_cost = (total_input_tokens * haiku_input_price) + (total_output_tokens * haiku_output_price)
+    sonnet_compile_cost = (total_input_tokens * sonnet_input_price) + (total_output_tokens * sonnet_output_price)
 
     # Monthly total costs
-    flash_monthly_cost = volume * flash_compile_cost
-    pro_monthly_cost = volume * pro_compile_cost
+    haiku_monthly_cost = volume * haiku_compile_cost
+    sonnet_monthly_cost = volume * sonnet_compile_cost
 
     # Hybrid Routing Strategy:
-    # S1 (Flash), S2 (Flash), S3 (Pro - Schema gen), S4 (Flash), Repairs (Flash)
-    s1_cost_flash = ((prompt_words * words_to_tokens_ratio + 200) * flash_input_price) + (200 * flash_output_price)
-    s2_cost_flash = (450 * flash_input_price) + (400 * flash_output_price)
-    s3_cost_pro = (700 * pro_input_price) + (800 * pro_output_price)
-    s4_cost_flash = (1000 * flash_input_price) + (800 * flash_output_price)
-    repairs_cost_flash = repairs * ((1050 * flash_input_price) + (800 * flash_output_price))
+    # S1 (Haiku), S2 (Haiku), S3 (Sonnet - Schema gen), S4 (Haiku), Repairs (Haiku)
+    s1_cost_haiku = ((prompt_words * words_to_tokens_ratio + 200) * haiku_input_price) + (200 * haiku_output_price)
+    s2_cost_haiku = (450 * haiku_input_price) + (400 * haiku_output_price)
+    s3_cost_sonnet = (700 * sonnet_input_price) + (800 * sonnet_output_price)
+    s4_cost_haiku = (1000 * haiku_input_price) + (800 * haiku_output_price)
+    repairs_cost_haiku = repairs * ((1050 * haiku_input_price) + (800 * haiku_output_price))
 
-    hybrid_compile_cost = s1_cost_flash + s2_cost_flash + s3_cost_pro + s4_cost_flash + repairs_cost_flash
+    hybrid_compile_cost = s1_cost_haiku + s2_cost_haiku + s3_cost_sonnet + s4_cost_haiku + repairs_cost_haiku
     hybrid_monthly_cost = volume * hybrid_compile_cost
     
     # Latencies
-    flash_latency = (4 + repairs) * flash_avg_latency_per_call
-    pro_latency = (4 + repairs) * pro_avg_latency_per_call
-    hybrid_latency = (3 * flash_avg_latency_per_call) + pro_avg_latency_per_call + (repairs * flash_avg_latency_per_call)
+    haiku_latency = (4 + repairs) * haiku_avg_latency_per_call
+    sonnet_latency = (4 + repairs) * sonnet_avg_latency_per_call
+    hybrid_latency = (3 * haiku_avg_latency_per_call) + sonnet_avg_latency_per_call + (repairs * haiku_avg_latency_per_call)
 
     with col2:
         st.write("### 📊 Operational Financial Forecasts")
@@ -599,15 +641,15 @@ with tab3:
         m_col1, m_col2, m_col3 = st.columns(3)
         with m_col1:
             st.metric(
-                label="Gemini 2.5 Flash Monthly Cost",
-                value=f"${flash_monthly_cost:.2f}",
-                delta=f"${flash_compile_cost:.4f} / compile"
+                label="Claude 3.5 Haiku Monthly Cost",
+                value=f"${haiku_monthly_cost:.2f}",
+                delta=f"${haiku_compile_cost:.4f} / compile"
             )
         with m_col2:
             st.metric(
-                label="Gemini 2.5 Pro Monthly Cost",
-                value=f"${pro_monthly_cost:.2f}",
-                delta=f"${pro_compile_cost:.4f} / compile"
+                label="Claude 3.5 Sonnet Monthly Cost",
+                value=f"${sonnet_monthly_cost:.2f}",
+                delta=f"${sonnet_compile_cost:.4f} / compile"
             )
         with m_col3:
             st.metric(
@@ -630,25 +672,25 @@ with tab3:
                 "Quality & Logic Safety Rating",
                 "Optimal Use Case"
             ],
-            "Gemini 2.5 Flash": [
-                f"${flash_monthly_cost:.2f}",
-                f"${flash_compile_cost:.5f}",
-                f"{flash_latency:.2f}s",
-                "75% (Fast, high-efficiency, standard layout tasks)",
+            "Claude 3.5 Haiku": [
+                f"${haiku_monthly_cost:.2f}",
+                f"${haiku_compile_cost:.5f}",
+                f"{haiku_latency:.2f}s",
+                "85% (Fast, high-efficiency, standard layout tasks)",
                 "High-speed initial drafts and rapid prototyping."
             ],
-            "Gemini 2.5 Pro": [
-                f"${pro_monthly_cost:.2f}",
-                f"${pro_compile_cost:.5f}",
-                f"{pro_latency:.2f}s",
-                "95% (Complex structural safety, strict schemas)",
+            "Claude 3.5 Sonnet": [
+                f"${sonnet_monthly_cost:.2f}",
+                f"${sonnet_compile_cost:.5f}",
+                f"{sonnet_latency:.2f}s",
+                "98% (Complex structural safety, strict schemas)",
                 "Enterprise validation of safety-critical app models."
             ],
             "Hybrid Routing (Optimized)": [
                 f"${hybrid_monthly_cost:.2f}",
                 f"${hybrid_compile_cost:.5f}",
                 f"{hybrid_latency:.2f}s",
-                "92% (High-fidelity generation, low routing overhead)",
+                "95% (High-fidelity generation, low routing overhead)",
                 "Production workflow maximizing accuracy while reducing costs."
             ]
         }
@@ -656,12 +698,12 @@ with tab3:
         st.table(pd.DataFrame(comparison_data))
         
         # Save percentage
-        cost_saving = ((pro_monthly_cost - hybrid_monthly_cost) / pro_monthly_cost * 100) if pro_monthly_cost > 0 else 0
+        cost_saving = ((sonnet_monthly_cost - hybrid_monthly_cost) / sonnet_monthly_cost * 100) if sonnet_monthly_cost > 0 else 0
         
         st.info(
             f"💡 **Architectural Routing Recommendation**: Implementing **Hybrid Agentic Routing** is highly advised. \n\n"
-            f"- **Stage 1 & 2** (Intent Extraction & Architect Blueprinting) should use **Gemini 2.5 Flash** for rapid parsing.\n"
-            f"- **Stage 3** (Schema Generation) should route to **Gemini 2.5 Pro** to construct detailed, relationship-aware configurations conforming strictly to Pydantic boundaries.\n"
-            f"- **Stage 4** (Refinement) & any subsequent **Repair cycles** should route back to **Gemini 2.5 Flash** to maintain high response rates and reduce transaction costs.\n\n"
-            f"This architecture saves **{cost_saving:.1f}%** in monthly API expenses compared to running Gemini 2.5 Pro exclusively, with nearly identical schema safety ratings."
+            f"- **Stage 1 & 2** (Intent Extraction & Architect Blueprinting) should use **Claude 3.5 Haiku** for rapid parsing.\n"
+            f"- **Stage 3** (Schema Generation) should route to **Claude 3.5 Sonnet** to construct detailed, relationship-aware configurations conforming strictly to Pydantic boundaries.\n"
+            f"- **Stage 4** (Refinement) & any subsequent **Repair cycles** should route back to **Claude 3.5 Haiku** to maintain high response rates and reduce transaction costs.\n\n"
+            f"This architecture saves **{cost_saving:.1f}%** in monthly API expenses compared to running Claude 3.5 Sonnet exclusively, with nearly identical schema safety ratings."
         )

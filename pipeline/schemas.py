@@ -288,19 +288,39 @@ class UnifiedAppConfigSchema(BaseModel):
     business_logic: Optional[BusinessLogicSchema] = Field(default_factory=BusinessLogicSchema)
     pricing: Optional[Dict[str, Any]] = Field(default=None)
 
+    # Step 3 exact contract fields for absolute compatibility
+    intent: Optional[Dict[str, Any]] = Field(default=None)
+    entities: Optional[List[Dict[str, Any]]] = Field(default_factory=list)
+    db_schema: Optional[DatabaseSchema] = Field(default=None)
+    auth: Optional[AuthSchema] = Field(default=None)
+    assumptions: List[str] = Field(default_factory=list)
+    warnings: List[str] = Field(default_factory=list)
+
     @model_validator(mode="before")
     @classmethod
     def parse_unified_config(cls, data: Any) -> Any:
         """Handles cross-layer schema mappings and extracts metadata configurations."""
         if isinstance(data, dict):
+            # Map Step 3 variables to internal fields
+            if "db_schema" in data and "db" not in data and "database_schema" not in data:
+                data["database_schema"] = data["db_schema"]
+                data["db"] = data["db_schema"]
+            if "auth" in data and "auth_rules" not in data:
+                data["auth_rules"] = data["auth"]
+            
+            # Map existing fields to Step 3 variables
             if "db" in data and "database_schema" not in data:
                 data["database_schema"] = data["db"]
+            if "database_schema" in data and "db_schema" not in data:
+                data["db_schema"] = data["database_schema"]
             if "api" in data and "api_schema" not in data:
                 data["api_schema"] = data["api"]
             if "ui" in data and "ui_schema" not in data:
                 data["ui_schema"] = data["ui"]
-            if "auth" in data and "auth_rules" not in data:
-                data["auth_rules"] = data["auth"]
+            if "auth_rules" in data and "auth" not in data:
+                data["auth"] = data["auth_rules"]
+            if "app_metadata" in data and "intent" not in data:
+                data["intent"] = data["app_metadata"]
 
             if "app_metadata" not in data:
                 if "intent" in data:
@@ -313,4 +333,6 @@ class UnifiedAppConfigSchema(BaseModel):
                         "pricing_plans": data.get("pricing_plans") or []
                     }
                     data["app_metadata"] = metadata_data
+                    data["intent"] = metadata_data
         return data
+
